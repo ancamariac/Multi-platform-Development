@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "helper.h"
  
-int main(void)
+int main(int argc, char **argv)
 {
    printf("Hey there\n");
-   return 1;
+   return 0;
 }
