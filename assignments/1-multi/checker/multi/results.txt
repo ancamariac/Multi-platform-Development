@@ -4,15 +4,15 @@
 02) Test bad parameters.....................................passed  [01/95]
 03) Test multiple files.....................................passed  [01/95]
 04) Test stdin file.........................................passed  [01/95]
-04) Test stdin file - memcheck..............................failed  [ 0/95]
+04) Test stdin file - memcheck..............................passed  [01/95]
 05) Test simple file........................................passed  [01/95]
-05) Test simple file - memcheck.............................failed  [ 0/95]
+05) Test simple file - memcheck.............................passed  [01/95]
 _test/outputs/test6.out vs _test/outputs/test6.ref:
 06) Test simple out file....................................failed  [ 0/95]
 06) Test simple out file - memcheck.........................failed  [ 0/95]
 _test/outputs/test7.out vs _test/outputs/test7.ref:
---- _test/outputs/test7.out	2022-03-15 18:06:37.125106708 +0200
-+++ _test/outputs/test7.ref	2022-03-15 18:06:36.765106694 +0200
+--- _test/outputs/test7.out	2022-03-15 18:43:49.353190735 +0200
++++ _test/outputs/test7.ref	2022-03-15 18:43:48.981190721 +0200
 @@ -1,8 +1,5 @@
 -#define VAR0 1
 -
@@ -22,4 +22,4 @@ _test/outputs/test7.out vs _test/outputs/test7.ref:
 -
 +    int y = 1 + 1;
 07) Test simple define......................................failed  [ 0/95]
-07) Test simple define - memcheck...........................failed  [ 0/95]
+07) Test simple define - memcheck...........................passed  [01/95]

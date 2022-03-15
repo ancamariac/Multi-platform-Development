@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 	FILE *outFile;
 
 	for (int i = 1; i < argc; i++) {
-		if (argv[i][0] == '-') {
+		if (argv[i] && argv[i][0] == '-') {
 			if (argv[i][1] == 'D') {
 				if (strlen(argv[i]) == 2) {
 					if (argv[i + 2] &&
@@ -73,18 +73,21 @@ int main(int argc, char **argv)
       outFile = stdout;
    }
 
-	char *line;
+	char *line = NULL;
 	size_t len = 0;
 	int read = 0;
 
 	while ((read = getline(&line, &len, inFile)) != -1) {
 		fputs(line, outFile);
-		free(line);
 	}
 
+	free(line);
+	
+	fflush(inFile);
 	fclose(inFile);
    	free(inputFileName);
 
+	fflush(outFile);
 	fclose(outFile);
    	free(outputFileName);
 
