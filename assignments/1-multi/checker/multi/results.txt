@@ -3,9 +3,7 @@
 01) Test bad input..........................................passed  [01/95]
 02) Test bad parameters.....................................passed  [01/95]
 03) Test multiple files.....................................passed  [01/95]
-_test/outputs/test4.out vs _test/outputs/test4.ref:
-Binary files _test/outputs/test4.out and _test/outputs/test4.ref differ
-04) Test stdin file.........................................failed  [ 0/95]
+04) Test stdin file.........................................passed  [01/95]
 04) Test stdin file - memcheck..............................failed  [ 0/95]
 05) Test simple file........................................passed  [01/95]
 05) Test simple file - memcheck.............................failed  [ 0/95]
@@ -13,8 +11,8 @@ _test/outputs/test6.out vs _test/outputs/test6.ref:
 06) Test simple out file....................................failed  [ 0/95]
 06) Test simple out file - memcheck.........................failed  [ 0/95]
 _test/outputs/test7.out vs _test/outputs/test7.ref:
---- _test/outputs/test7.out	2022-03-15 17:23:34.621009496 +0200
-+++ _test/outputs/test7.ref	2022-03-15 17:23:34.257009482 +0200
+--- _test/outputs/test7.out	2022-03-15 18:06:37.125106708 +0200
++++ _test/outputs/test7.ref	2022-03-15 18:06:36.765106694 +0200
 @@ -1,8 +1,5 @@
 -#define VAR0 1
 -
@@ -25,33 +23,3 @@ _test/outputs/test7.out vs _test/outputs/test7.ref:
 +    int y = 1 + 1;
 07) Test simple define......................................failed  [ 0/95]
 07) Test simple define - memcheck...........................failed  [ 0/95]
-_test/outputs/test8.out vs _test/outputs/test8.ref:
-Binary files _test/outputs/test8.out and _test/outputs/test8.ref differ
-08) Test param define.......................................failed  [ 0/95]
-08) Test param define - memcheck............................failed  [ 0/95]
-_test/outputs/test9.out vs _test/outputs/test9.ref:
---- _test/outputs/test9.out	2022-03-15 17:23:35.429009527 +0200
-+++ _test/outputs/test9.ref	2022-03-15 17:23:35.057009513 +0200
-@@ -1,10 +1,6 @@
--#define VAR0 1
--
- int main() {
--    int y = VAR0 + 1;
-+    int y = 1 + 1;
-+    printf("%d\n", 1);
-     printf("%d\n", VAR0);
-09) Test simple define/undef................................failed  [ 0/95]
-09) Test simple define/undef - memcheck.....................failed  [ 0/95]
-_test/outputs/test10.out vs _test/outputs/test10.ref:
---- _test/outputs/test10.out	2022-03-15 17:23:35.825009541 +0200
-+++ _test/outputs/test10.ref	2022-03-15 17:23:35.457009528 +0200
-@@ -1,10 +1,6 @@
--#define ABC "10"
--#define BCD 20 + 4
--
- int main() {
--    printf("%s\n", ABC);
--    int x = BCD + 20;
-+    printf("%s\n", "10");
-10) Test multiple defines...................................failed  [ 0/95]
-10) Test multiple defines - memcheck........................failed  [ 0/95]
