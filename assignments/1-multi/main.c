@@ -12,5 +12,7 @@ int main(int argc, char **argv)
 	char *res = get(&map, "key");
 	printf("%s\n", res);
 
+   deleteMap(&map);
+
    return 0;
 }
