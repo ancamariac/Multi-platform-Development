@@ -6,16 +6,8 @@ int main(int argc, char **argv)
 	char *outputFileName = NULL;
 	HashMap map = createHashMap(6);
 
-	FILE *inFile = fopen(inputFileName, "r");
-	FILE *outFile = fopen(outputFileName, "w");
-
-	if (inFile == NULL) {
-		exit(EXIT_FAILURE);
-	}
-
-	if (outFile == NULL) {
-		exit(EXIT_FAILURE);
-	}
+	FILE *inFile;
+	FILE *outFile;
 
 	for (int i = 0; i < argc; i++) {
 		if (argv[i][0] == '-') {
@@ -66,14 +58,16 @@ int main(int argc, char **argv)
 		}
 	}
 
-   if (!inputFileName) {
-      inputFileName = malloc(strlen("STDIN") * sizeof(char));
-      strcpy(inputFileName, "STDIN");
+   if (inputFileName) {
+      inFile = fopen(inputFileName, "r");
+   } else {
+      inFile = stdin;
    }
 
-   if (!outputFileName) {
-      outputFileName = malloc(strlen("STDOUT") * sizeof(char));
-      strcpy(outputFileName, "STDOUT");
+   if (outputFileName) {
+      outFile = fopen(outputFileName, "w");
+   } else {
+      outFile = stdout;
    }
 
 	char ch;
