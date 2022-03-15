@@ -106,18 +106,3 @@ void delete (HashMap *map, char *key)
 		index %= map->size;
 	}
 }
-
-int main()
-{
-	// printf("%d", hashFunc("Hello2", 10));
-
-	HashMap map = createHashMap(6);
-	insert(&map, "key", "val");
-	delete (&map, "key");
-	insert(&map, "key", "value");
-
-	char *res = get(&map, "key");
-	printf("%s\n", res);
-
-	return 0;
-}
