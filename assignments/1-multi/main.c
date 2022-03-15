@@ -67,12 +67,12 @@ int main(int argc, char **argv)
 	}
 
    if (!inputFileName) {
-      inputFileName = malloc(strelen("STDIN") * sizeof(char));
+      inputFileName = malloc(strlen("STDIN") * sizeof(char));
       strcpy(inputFileName, "STDIN");
    }
 
    if (!outputFileName) {
-      outputFileName = malloc(strelen("STDOUT") * sizeof(char));
+      outputFileName = malloc(strlen("STDOUT") * sizeof(char));
       strcpy(outputFileName, "STDOUT");
    }
 
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 
 	fclose(outFile);
    free(outputFileName);
-   
+
 	deleteMap(&map);
    
 	printf("%s\n", inputFileName);
