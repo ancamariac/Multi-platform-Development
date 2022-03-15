@@ -76,17 +76,14 @@ int main(int argc, char **argv)
 		fputc(ch, outFile);
 	}
 
-	fclose(inFile);
-   free(inputFileName);
+	//fclose(inFile);
+   //free(inputFileName);
 
-	fclose(outFile);
-   free(outputFileName);
+	//fclose(outFile);
+   //free(outputFileName);
 
 	deleteMap(&map);
    
-	printf("%s\n", inputFileName);
-	printf("%s\n", outputFileName);
-	printf("%s\n", get(&map, "var0"));
-
+	
 	return 0;
 }
