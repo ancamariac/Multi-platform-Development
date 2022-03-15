@@ -9,7 +9,7 @@ int main(int argc, char **argv)
 	FILE *inFile;
 	FILE *outFile;
 
-	for (int i = 0; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 		if (argv[i][0] == '-') {
 			if (argv[i][1] == 'D') {
 				if (strlen(argv[i]) == 2) {
@@ -60,6 +60,9 @@ int main(int argc, char **argv)
 
    if (inputFileName) {
       inFile = fopen(inputFileName, "r");
+	if (inFile == NULL) {
+         return 1;
+      }
    } else {
       inFile = stdin;
    }
@@ -70,17 +73,20 @@ int main(int argc, char **argv)
       outFile = stdout;
    }
 
-	char ch;
+	char *line;
+	size_t len = 0;
+	int read = 0;
 
-	while ((ch = fgetc(inFile)) != EOF) {
-		fputc(ch, outFile);
+	while ((read = getline(&line, &len, inFile)) != -1) {
+		fputs(line, outFile);
+		free(line);
 	}
 
-	//fclose(inFile);
-   //free(inputFileName);
+	fclose(inFile);
+   	free(inputFileName);
 
-	//fclose(outFile);
-   //free(outputFileName);
+	fclose(outFile);
+   	free(outputFileName);
 
 	deleteMap(&map);
    
