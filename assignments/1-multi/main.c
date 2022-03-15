@@ -68,7 +68,7 @@ int main(int argc, char **argv)
    }
 
    if (outputFileName) {
-      outFile = fopen(outputFileName, "w");
+      outFile = fopen(outputFileName, O_RDWR | O_CREAT);
    } else {
       outFile = stdout;
    }
