@@ -1,4 +1,31 @@
 #include "helper.h"
+#include <fcntl.h>
+
+
+void parseFile(FILE * in, FILE * out, HashMap *map) {
+   char *line = NULL;
+	size_t len = 0;
+	int read = 0;
+
+   char *token = NULL, *key = NULL, *value = NULL;
+   const char space[2] = " ";
+
+	while ((read = getline(&line, &len, in)) != -1) {
+      token = strtok(line, space);
+
+      if (!strcmp(token, "#define")) {
+         while (token != NULL) {
+            key = strtok(NULL, space);
+            value = strtok(NULL, space);
+         }
+         insert(&map, key, value);
+      } else {
+         fputs(line, out);
+      }	
+	}
+
+   free(line);
+}
 
 int main(int argc, char **argv)
 {
@@ -6,8 +33,8 @@ int main(int argc, char **argv)
 	char *outputFileName = NULL;
 	HashMap map = createHashMap(6);
 
-	FILE *inFile;
-	FILE *outFile;
+	FILE *inFile = NULL;
+	FILE *outFile = NULL;
 
 	for (int i = 1; i < argc; i++) {
 		if (argv[i] && argv[i][0] == '-') {
@@ -68,20 +95,10 @@ int main(int argc, char **argv)
    }
 
    if (outputFileName) {
-      outFile = fopen(outputFileName, O_RDWR | O_CREAT);
+      outFile = fopen(outputFileName, "w+");
    } else {
       outFile = stdout;
    }
-
-	char *line = NULL;
-	size_t len = 0;
-	int read = 0;
-
-	while ((read = getline(&line, &len, inFile)) != -1) {
-		fputs(line, outFile);
-	}
-
-	free(line);
 	
 	fflush(inFile);
 	fclose(inFile);
