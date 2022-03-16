@@ -33,7 +33,6 @@ char* replace(char* line, char* key, char* value) {
 		free(line);
 		return result; 
 	} else {
-		//strcpy(result, line);
 		return line;
 	}
 
@@ -128,7 +127,7 @@ int main(int argc, char **argv)
 				inputFileName = 
 				malloc((strlen(argv[i]) + 1) * sizeof(char));
 				strcpy(inputFileName, argv[i]);
-			} else {
+			} else if (outputFileName == NULL) {
 				outputFileName = 
 				malloc((strlen(argv[i]) + 1) * sizeof(char));
 				strcpy(outputFileName, argv[i]);
