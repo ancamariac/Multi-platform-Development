@@ -52,8 +52,8 @@ void parseFile(FILE *in, FILE *out, HashMap *map)
 	//char *result = NULL;
 
 	while ((read = getline(&line, &len, in)) != -1) {
-		char* line_copy = malloc(strlen(line) * sizeof(char));
-		char* result = malloc(strlen(line) *sizeof(char));
+		char* line_copy = malloc((strlen(line) + 1) * sizeof(char));
+		char* result = malloc((strlen(line) + 1) * sizeof(char));
 		strcpy(line_copy, line);
 		strcpy(result, line); 
 		token = strtok(line_copy, delimiters);
