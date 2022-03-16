@@ -61,6 +61,9 @@ void parseFile(FILE *in, FILE *out, HashMap *map)
 			key = strtok(NULL, delimiters); // se ia VAR
 			value = strtok(NULL, "\n"); // se ia 1
 			insert(map, key, value);
+		} else if(!strcmp(token, "#undef")) {
+			key = strtok(NULL, "\n");
+			delete(map, key);
 		} else {
 			while (token != NULL) {				
 				value = get(map, token);
@@ -72,6 +75,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map)
 			}
 			fputs(result, out);
 		}
+
 		free(line_copy);
 		free(result);
 	}
