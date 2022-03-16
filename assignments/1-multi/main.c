@@ -92,29 +92,21 @@ int main(int argc, char **argv)
 	for (int i = 1; i < argc; i++) {
 		if (argv[i] && argv[i][0] == '-') {
 			if (argv[i][1] == 'D') {
+				char *key, *val;
 				if (strlen(argv[i]) == 2) {
-					if (argv[i + 2] &&
-					    argv[i + 1][0] != '-') {
-						insert(&map, argv[i + 1],
-						       argv[i + 2]);
-					} else {
-						insert(&map, argv[i + 1], "");
-						i--;
-					}
-					i += 2;
+					key = strtok(argv[i + 1], "=");
+					i++;
 				} else {
-
-					if (argv[i + 1] &&
-					    argv[i + 1][0] != '-') {
-						insert(&map, argv[i] + 2,
-						       argv[i + 1]);
-
-					} else {
-						insert(&map, argv[i] + 2, "");
-						i--;
-					}
-					i += 1;
+					key = strtok(argv[i] + 2, "=");
 				}
+
+				val = strtok(NULL, "");
+				if (val == NULL) {
+					val = "";
+				}
+
+				insert(&map, key, val);
+
 			} else if (argv[i][1] == 'I') {
 				// to do
 			} else if (argv[i][1] == 'o') {
@@ -132,9 +124,15 @@ int main(int argc, char **argv)
 				}
 			}
 		} else {
-			inputFileName =
-			    malloc((strlen(argv[i]) + 1) * sizeof(char));
-			strcpy(inputFileName, argv[i]);
+			if (inputFileName == NULL) {
+				inputFileName = 
+				malloc((strlen(argv[i]) + 1) * sizeof(char));
+				strcpy(inputFileName, argv[i]);
+			} else {
+				outputFileName = 
+				malloc((strlen(argv[i]) + 1) * sizeof(char));
+				strcpy(outputFileName, argv[i]);
+			}
 		}
 	}
 
