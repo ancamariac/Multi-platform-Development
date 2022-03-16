@@ -132,6 +132,8 @@ int main(int argc, char **argv)
 				malloc((strlen(argv[i]) + 1) * sizeof(char));
 				strcpy(outputFileName, argv[i]);
 			} else {
+				free(inputFileName);
+				free(outputFileName);
 				return 1;
 			}
 		}
