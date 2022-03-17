@@ -47,7 +47,7 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 	char *line = NULL;
 	size_t len = 0;
 	int read = 0;
-	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
+	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
 
 	if (done == 1) {
 		while ((read = getline(&line, &len, in)) != -1) {
