@@ -65,6 +65,7 @@ void ifelse (FILE *in, FILE *out, HashMap *map, int cond, int done) {
 				return;
 			} else if (!strncmp(line, "#else", 5)) {
 				ifelse(in, out, map, 1, 0);
+				free(line);
 				return;
 			} else if (!strncmp(line, "#elif", 5)) {
 				char *token = strtok(line, delimiters);
@@ -94,21 +95,8 @@ void ifelse (FILE *in, FILE *out, HashMap *map, int cond, int done) {
 				free(line);
 				return;
 			} else if (!strncmp(line, "#elif", 5)) {
-				char *token = strtok(line, delimiters);
-				token = strtok(NULL, "\n");
-				char *val = get(map, token);
-				if (val != NULL) {
-					token = val;
-				}
-				if (!strcmp(token, "0")) {
-					ifelse(in, out, map, 0, 1);
-					free(line);
-					return;
-				} else {
-					ifelse(in, out, map, 1, 1);
-					free(line);
-					return;
-				}
+				ifelse(in, out, map, 1, 1);
+				free(line);
 			} else {
 				fputs(line, out);
 			}
