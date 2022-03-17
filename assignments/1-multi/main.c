@@ -128,8 +128,8 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 				return;
 			} else {
 				if (!strncmp(line, "#define", 7)) {
-					char *token = strtok(line, delimiters);
-					char *key = strtok(NULL, delimiters);
+					char *key = strtok(line, delimiters);
+					key = strtok(NULL, delimiters);
 					char *value = strtok(NULL, "\n");
 
 					if (value) {
@@ -138,8 +138,8 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 						insert(map, key, "");
 					}
 				} else if (!strncmp(line, "#undef", 6)) {
-					char *token = strtok(line, delimiters);
-					char *key = strtok(NULL, delimiters);
+					char *key = strtok(line, delimiters);
+					key = strtok(NULL, delimiters);
 
 					delete (map, key);
 				} else {
