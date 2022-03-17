@@ -40,6 +40,83 @@ char* replace(char* line, char* key, char* value) {
 	return result;
 }
 
+void ifelse (FILE *in, FILE *out, HashMap *map, int cond, int done) {
+	
+	
+	char *line = NULL;
+	size_t len = 0;
+	int read = 0;
+	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
+
+	if (done == 1) {
+		while ((read = getline(&line, &len, in)) != -1) {
+			if (!strncmp(line, "#endif", 6)) {
+				free(line);
+				return;
+			}
+		}
+		return;
+	}
+
+	if (cond == 0) {
+		while ((read = getline(&line, &len, in)) != -1) {
+			if (!strncmp(line, "#endif", 6)) {
+				free(line);
+				return;
+			} else if (!strncmp(line, "#else", 5)) {
+				ifelse(in, out, map, 1, 0);
+				return;
+			} else if (!strncmp(line, "#elif", 5)) {
+				char *token = strtok(line, delimiters);
+				token = strtok(NULL, "\n");
+				char *val = get(map, token);
+				if (val != NULL) {
+					token = val;
+				}
+				if (!strcmp(token, "0")) {
+					ifelse(in, out, map, 0, 0);
+					free(line);
+					return;
+				} else {
+					ifelse(in, out, map, 1, 0);
+					free(line);
+					return;
+				}
+			}
+		}
+	} else {
+		while ((read = getline(&line, &len, in)) != -1) {
+			if (!strncmp(line, "#endif", 6)) {
+				free(line);
+				return;
+			} else if (!strncmp(line, "#else", 5)) {
+				ifelse(in, out, map, 1, 1);
+				free(line);
+				return;
+			} else if (!strncmp(line, "#elif", 5)) {
+				char *token = strtok(line, delimiters);
+				token = strtok(NULL, "\n");
+				char *val = get(map, token);
+				if (val != NULL) {
+					token = val;
+				}
+				if (!strcmp(token, "0")) {
+					ifelse(in, out, map, 0, 1);
+					free(line);
+					return;
+				} else {
+					ifelse(in, out, map, 1, 1);
+					free(line);
+					return;
+				}
+			} else {
+				fputs(line, out);
+			}
+		}
+	}
+	free(line);
+}
+
 void parseFile(FILE *in, FILE *out, HashMap *map)
 {
 	char *line = NULL;
@@ -48,7 +125,6 @@ void parseFile(FILE *in, FILE *out, HashMap *map)
 
 	char *token = NULL, *key = NULL, *value = NULL;
 	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
-	//char *result = NULL;
 
 	while ((read = getline(&line, &len, in)) != -1) {
 		char* line_copy = malloc((strlen(line) + 1) * sizeof(char));
@@ -58,13 +134,26 @@ void parseFile(FILE *in, FILE *out, HashMap *map)
 		token = strtok(line_copy, delimiters);
 
 		if (!strcmp(token, "#define")) {
-			key = strtok(NULL, delimiters); // se ia VAR
-			value = strtok(NULL, "\n"); // se ia 1
+			key = strtok(NULL, delimiters);
+			value = strtok(NULL, "\n");
 			insert(map, key, value);
 		} else if(!strcmp(token, "#undef")) {
 			key = strtok(NULL, "\n");
 			delete(map, key);
-		} else {
+		} else if (!strcmp(token, "#if")) {
+			token = strtok(NULL, "\n");
+			char *val = get(map, token);
+			if (val != NULL) {
+				token = val;
+			}
+			if (!strcmp(token, "0")) {
+				ifelse(in, out, map, 0, 0);
+			} else {
+				ifelse(in, out, map, 1, 0);
+			}
+		} 
+		
+		else {
 			while (token != NULL) {				
 				value = get(map, token);
 				if (value != NULL) {
@@ -106,10 +195,10 @@ void getArgs(int argc, char **argv, char **input, char **output, HashMap *map) {
 				// to do
 			} else if (argv[i][1] == 'o') {
 				if (strlen(argv[i]) == 2) {
-					*input =
+					*output =
 					    malloc((strlen(argv[i + 1]) + 1) *
 						   sizeof(char));
-					strcpy(*input, argv[i + 1]);
+					strcpy(*output, argv[i + 1]);
 					i++;
 				} else {
 					*output =
@@ -161,7 +250,6 @@ int main(int argc, char **argv)
 	} else {
 		outFile = stdout;
 	}
-
 
 	parseFile(inFile, outFile, &map);
 
