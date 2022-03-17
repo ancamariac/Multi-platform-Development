@@ -112,6 +112,8 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 	size_t len = 0;
 	int read = 0;
 
+	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
+
 	if (cond == 0) {
 		while ((read = getline(&line, &len, in)) != -1) {
 			if (!strncmp(line, "#endif", 6)) {
@@ -125,7 +127,24 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 				free(line);
 				return;
 			} else {
-				fputs(line, out);
+				if (!strncmp(line, "#define", 7)) {
+					char *token = strtok(line, delimiters);
+					char *key = strtok(NULL, delimiters);
+					char *value = strtok(NULL, "\n");
+
+					if (value) {
+						insert(map, key, value);
+					} else {
+						insert(map, key, "");
+					}
+				} else if (!strncmp(line, "#undef", 6)) {
+					char *token = strtok(line, delimiters);
+					char *key = strtok(NULL, delimiters);
+
+					delete (map, key);
+				} else {
+					fputs(line, out);
+				}
 			}
 		}
 	}
