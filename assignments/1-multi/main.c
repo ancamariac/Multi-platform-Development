@@ -47,7 +47,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map)
 	int read = 0;
 
 	char *token = NULL, *key = NULL, *value = NULL;
-	const char delimiters[] = " ();{}/," ;
+	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 	//char *result = NULL;
 
 	while ((read = getline(&line, &len, in)) != -1) {
@@ -83,15 +83,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map)
 	
 }
 
-int main(int argc, char **argv)
-{
-	char *inputFileName = NULL;
-	char *outputFileName = NULL;
-	HashMap map = createHashMap(6);
-
-	FILE *inFile = NULL;
-	FILE *outFile = NULL;
-
+void getArgs(int argc, char **argv, char **input, char **output, HashMap *map) {
 	for (int i = 1; i < argc; i++) {
 		if (argv[i] && argv[i][0] == '-') {
 			if (argv[i][1] == 'D') {
@@ -108,40 +100,52 @@ int main(int argc, char **argv)
 					val = "";
 				}
 
-				insert(&map, key, val);
+				insert(map, key, val);
 
 			} else if (argv[i][1] == 'I') {
 				// to do
 			} else if (argv[i][1] == 'o') {
 				if (strlen(argv[i]) == 2) {
-					outputFileName =
+					*input =
 					    malloc((strlen(argv[i + 1]) + 1) *
 						   sizeof(char));
-					strcpy(outputFileName, argv[i + 1]);
+					strcpy(*input, argv[i + 1]);
 					i++;
 				} else {
-					outputFileName =
+					*output =
 					    malloc((strlen(argv[i] + 2) + 1) *
 						   sizeof(char));
-					strcpy(outputFileName, argv[i] + 2);
+					strcpy(*output, argv[i] + 2);
 				}
 			}
 		} else {
-			if (inputFileName == NULL) {
-				inputFileName = 
+			if (*input == NULL) {
+				*input = 
 				malloc((strlen(argv[i]) + 1) * sizeof(char));
-				strcpy(inputFileName, argv[i]);
-			} else if (outputFileName == NULL) {
-				outputFileName = 
+				strcpy(*input, argv[i]);
+			} else if (*output == NULL) {
+				*output = 
 				malloc((strlen(argv[i]) + 1) * sizeof(char));
-				strcpy(outputFileName, argv[i]);
+				strcpy(*output, argv[i]);
 			} else {
-				free(inputFileName);
-				free(outputFileName);
-				return 1;
+				free(*input);
+				free(*output);
+				exit(1);
 			}
 		}
 	}
+}
+
+int main(int argc, char **argv)
+{
+	char *inputFileName = NULL;
+	char *outputFileName = NULL;
+	HashMap map = createHashMap(6);
+
+	FILE *inFile = NULL;
+	FILE *outFile = NULL;
+
+	getArgs(argc, argv, &inputFileName, &outputFileName, &map);
 
 	if (inputFileName) {
 		inFile = fopen(inputFileName, "r");
