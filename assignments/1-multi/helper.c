@@ -9,6 +9,11 @@ HashMap createHashMap(int size)
 	newMap.size = size;
 	newMap.cnt = 0;
 	newMap.elem = malloc(newMap.size * sizeof(Elem));
+
+	if(!newMap.elem) {
+		exit(1);
+	}
+
 	for (int i = 0; i < newMap.size; i++) {
 		newMap.elem[i].key = NULL;
 		newMap.elem[i].value = NULL;
@@ -61,7 +66,17 @@ void insert(HashMap *map, char *key, char *value)
 	while (1) {
 		if (map->elem[index].key == NULL) {
 			map->elem[index].key = malloc(strlen(key) + 1);
+
+			if(!map->elem[index].key) {
+				exit(1);
+			}
+
 			map->elem[index].value = malloc(strlen(value) + 1);
+
+			if(!map->elem[index].value) {
+				exit(1);
+			}
+
 			strcpy(map->elem[index].key, key);
 			strcpy(map->elem[index].value, value);
 			map->cnt++;

@@ -6,6 +6,11 @@ FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDi
 	FILE *file;
 
 	char* filePath = malloc((strlen(currentDir) + strlen(fileName) + 1) * sizeof(char));
+
+	if(!filePath) {
+		exit(1);
+	}
+
 	strcpy(filePath, currentDir);
 	strcat(filePath, fileName);
 
@@ -19,6 +24,11 @@ FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDi
 
 	for (int i = 0; i < numDir; i++) {
 		char* path = malloc((strlen(directories[i]) + strlen(fileName) + 2) * sizeof(char));
+
+		if(!path) {
+			exit(1);
+		}
+
 		strcpy(path, directories[i]);
 		strcat(path, "/");
 		strcat(path, fileName);
@@ -61,6 +71,10 @@ char *replace(char *line, char *key, char *value)
 
 	if (found) {
 		result = malloc(len_res * sizeof(char));
+
+		if(!result) {
+			exit(1);
+		}
 
 		strncpy(result, line, i);
 		strncpy(result + i, value, len2);
@@ -193,6 +207,10 @@ char* getDirectory(char* path) {
 
 	char* dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName + 2)));
 
+	if(!dir) {
+		exit(1);
+	}
+
 	int i = 0;
 
 	while (path != fileName) {
@@ -218,7 +236,17 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char** directories, int numDir
 
 	while ((read = getline(&line, &len, in)) != -1) {
 		char *line_copy = malloc((strlen(line) + 1) * sizeof(char));
+
+		if(!line_copy) {
+			exit(1);
+		}
+
 		char *result = malloc((strlen(line) + 1) * sizeof(char));
+
+		if(!result) {
+			exit(1);
+		}
+
 		strcpy(line_copy, line);
 		strcpy(result, line);
 		token = strtok(line_copy, delimiters);
@@ -300,6 +328,11 @@ char** getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 	}
 	if (*numDir != 0) {
 		directories = malloc((*numDir) * sizeof(char*));
+
+		if(!directories) {
+			exit(1);
+		}
+
 	}
 	// end
 	for (int i = 1; i < argc; i++) {
@@ -324,11 +357,21 @@ char** getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 				// start
 				if (strlen(argv[i]) == 2) {
 					directories[currDir] = malloc((strlen(argv[i + 1]) + 1) * sizeof(char));
+
+					if(!directories[currDir]) {
+						exit(1);
+					}
+
 					strcpy(directories[currDir], argv[i + 1]);
 					i++;
 					
 				} else {
 					directories[currDir] = malloc((strlen(argv[i] + 2) + 1) * sizeof(char));
+
+					if(!directories[currDir]) {
+						exit(1);
+					}
+
 					strcpy(directories[currDir], argv[i] + 2);
 				}
 				currDir += 1;
@@ -338,12 +381,22 @@ char** getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 					*output =
 					    malloc((strlen(argv[i + 1]) + 1) *
 						   sizeof(char));
+
+					if(!output) {
+						exit(1);
+					}
+
 					strcpy(*output, argv[i + 1]);
 					i++;
 				} else {
 					*output =
 					    malloc((strlen(argv[i] + 2) + 1) *
 						   sizeof(char));
+
+					if(!output) {
+						exit(1);
+					}	
+					
 					strcpy(*output, argv[i] + 2);
 				}
 			}
@@ -351,10 +404,20 @@ char** getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 			if (*input == NULL) {
 				*input = malloc((strlen(argv[i]) + 1) *
 						sizeof(char));
+
+				if(!input) {
+					exit(1);
+				}
+
 				strcpy(*input, argv[i]);
 			} else if (*output == NULL) {
 				*output = malloc((strlen(argv[i]) + 1) *
 						 sizeof(char));
+
+				if(!output) {
+					exit(1);
+				}
+
 				strcpy(*output, argv[i]);
 			} else {
 				free(*input);
