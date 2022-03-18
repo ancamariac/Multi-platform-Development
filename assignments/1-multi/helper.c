@@ -6,13 +6,14 @@
 HashMap createHashMap(int size)
 {
 	HashMap newMap;
+
 	newMap.size = size;
 	newMap.cnt = 0;
 	newMap.elem = malloc(newMap.size * sizeof(Elem));
 
-	if(!newMap.elem) {
+	if (!newMap.elem) 
 		exit(1);
-	}
+	
 
 	for (int i = 0; i < newMap.size; i++) {
 		newMap.elem[i].key = NULL;
@@ -67,13 +68,13 @@ void insert(HashMap *map, char *key, char *value)
 		if (map->elem[index].key == NULL) {
 			map->elem[index].key = malloc(strlen(key) + 1);
 
-			if(!map->elem[index].key) {
+			if (!map->elem[index].key) {
 				exit(1);
 			}
 
 			map->elem[index].value = malloc(strlen(value) + 1);
 
-			if(!map->elem[index].value) {
+			if (!map->elem[index].value) {
 				exit(1);
 			}
 
@@ -102,7 +103,7 @@ char *get(HashMap *map, char *key)
 	}
 }
 
-void delete (HashMap *map, char *key)
+void delete(HashMap *map, char *key)
 {
 	int index = hashFunc(key, map->size);
 	while (1) {
