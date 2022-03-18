@@ -1,0 +1,494 @@
+WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+#1: FILE: ../../main.c:1:
++#include "helper.h"
+
+ERROR: "foo* bar" should be "foo *bar"
+#5: FILE: ../../main.c:5:
++FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDir) {
+
+ERROR: "foo* bar" should be "foo *bar"
+#5: FILE: ../../main.c:5:
++FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDir) {
+
+ERROR: "foo** bar" should be "foo **bar"
+#5: FILE: ../../main.c:5:
++FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDir) {
+
+ERROR: "foo* bar" should be "foo *bar"
+#5: FILE: ../../main.c:5:
++FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDir) {
+
+ERROR: open brace '{' following function definitions go on the next line
+#5: FILE: ../../main.c:5:
++FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDir) {
+
+ERROR: "foo* bar" should be "foo *bar"
+#8: FILE: ../../main.c:8:
++	char* filePath = malloc((strlen(currentDir) + strlen(fileName) + 1) * sizeof(char));
+
+ERROR: space required before the open parenthesis '('
+#10: FILE: ../../main.c:10:
++	if(!filePath) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#10: FILE: ../../main.c:10:
++	if(!filePath) {
++		exit(1);
++	}
+
+WARNING: please, no spaces at the start of a line
+#17: FILE: ../../main.c:17:
++    if ((file = fopen(filePath, "r")))$
+
+ERROR: that open brace { should be on the previous line
+#17: FILE: ../../main.c:17:
++    if ((file = fopen(filePath, "r")))
++    {
+
+WARNING: suspect code indent for conditional statements (4, 16)
+#17: FILE: ../../main.c:17:
++    if ((file = fopen(filePath, "r")))
++    {
+
+ERROR: do not use assignment in if condition
+#17: FILE: ../../main.c:17:
++    if ((file = fopen(filePath, "r")))
+
+WARNING: please, no spaces at the start of a line
+#18: FILE: ../../main.c:18:
++    {$
+
+ERROR: code indent should use tabs where possible
+#20: FILE: ../../main.c:20:
++        return file;$
+
+WARNING: please, no spaces at the start of a line
+#20: FILE: ../../main.c:20:
++        return file;$
+
+WARNING: please, no spaces at the start of a line
+#21: FILE: ../../main.c:21:
++    }$
+
+ERROR: trailing whitespace
+#22: FILE: ../../main.c:22:
++^I$
+
+ERROR: "foo* bar" should be "foo *bar"
+#26: FILE: ../../main.c:26:
++		char* path = malloc((strlen(directories[i]) + strlen(fileName) + 2) * sizeof(char));
+
+ERROR: space required before the open parenthesis '('
+#28: FILE: ../../main.c:28:
++		if(!path) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#28: FILE: ../../main.c:28:
++		if(!path) {
++			exit(1);
++		}
+
+ERROR: trailing whitespace
+#35: FILE: ../../main.c:35:
++^I^I$
+
+ERROR: that open brace { should be on the previous line
+#36: FILE: ../../main.c:36:
++		if ((file = fopen(path, "r")))
++    	{
+
+ERROR: do not use assignment in if condition
+#36: FILE: ../../main.c:36:
++		if ((file = fopen(path, "r")))
+
+ERROR: code indent should use tabs where possible
+#37: FILE: ../../main.c:37:
++    ^I{$
+
+WARNING: please, no space before tabs
+#37: FILE: ../../main.c:37:
++    ^I{$
+
+WARNING: please, no spaces at the start of a line
+#37: FILE: ../../main.c:37:
++    ^I{$
+
+ERROR: code indent should use tabs where possible
+#39: FILE: ../../main.c:39:
++        ^Ireturn file;$
+
+WARNING: please, no space before tabs
+#39: FILE: ../../main.c:39:
++        ^Ireturn file;$
+
+WARNING: please, no spaces at the start of a line
+#39: FILE: ../../main.c:39:
++        ^Ireturn file;$
+
+ERROR: code indent should use tabs where possible
+#40: FILE: ../../main.c:40:
++    ^I}$
+
+WARNING: please, no space before tabs
+#40: FILE: ../../main.c:40:
++    ^I}$
+
+WARNING: please, no spaces at the start of a line
+#40: FILE: ../../main.c:40:
++    ^I}$
+
+WARNING: please, no spaces at the start of a line
+#44: FILE: ../../main.c:44:
++    return NULL;$
+
+WARNING: braces {} are not necessary for single statement blocks
+#61: FILE: ../../main.c:61:
++			while (line[i] != '\"') {
++				i++;
++			}
+
+ERROR: space required before the open parenthesis '('
+#75: FILE: ../../main.c:75:
++		if(!result) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#75: FILE: ../../main.c:75:
++		if(!result) {
++			exit(1);
++		}
+
+WARNING: const array should probably be static const
+#98: FILE: ../../main.c:98:
++	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
+
+WARNING: Missing a blank line after declarations
+#121: FILE: ../../main.c:121:
++				char *token = strtok(line, delimiters);
++				token = strtok(NULL, "\n");
+
+WARNING: Missing a blank line after declarations
+#123: FILE: ../../main.c:123:
++				char *val = get(map, token);
++				if (val != NULL) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#123: FILE: ../../main.c:123:
++				if (val != NULL) {
++					token = val;
++				}
+
+WARNING: else is not generally useful after a break or return
+#130: FILE: ../../main.c:130:
++					return;
++				} else {
+
+WARNING: const array should probably be static const
+#163: FILE: ../../main.c:163:
++	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
+
+WARNING: else is not generally useful after a break or return
+#177: FILE: ../../main.c:177:
++				return;
++			} else {
+
+WARNING: Missing a blank line after declarations
+#180: FILE: ../../main.c:180:
++					char *key = strtok(line, delimiters);
++					key = strtok(NULL, delimiters);
+
+WARNING: braces {} are not necessary for any arm of this statement
+#183: FILE: ../../main.c:183:
++					if (value) {
+[...]
++					} else {
+[...]
+
+WARNING: Missing a blank line after declarations
+#190: FILE: ../../main.c:190:
++					char *key = strtok(line, delimiters);
++					key = strtok(NULL, delimiters);
+
+WARNING: space prohibited between function name and open parenthesis '('
+#191: FILE: ../../main.c:191:
++					delete (map, key);
+
+ERROR: "foo* bar" should be "foo *bar"
+#200: FILE: ../../main.c:200:
++char* getDirectory(char* path) {
+
+ERROR: "foo* bar" should be "foo *bar"
+#200: FILE: ../../main.c:200:
++char* getDirectory(char* path) {
+
+ERROR: open brace '{' following function definitions go on the next line
+#200: FILE: ../../main.c:200:
++char* getDirectory(char* path) {
+
+ERROR: trailing whitespace
+#201: FILE: ../../main.c:201:
++^I$
+
+WARNING: braces {} are not necessary for single statement blocks
+#202: FILE: ../../main.c:202:
++	if (!strcmp(path, "")) {
++		return path;
++	}
+
+ERROR: "foo* bar" should be "foo *bar"
+#206: FILE: ../../main.c:206:
++	char* fileName = strrchr(path, '/');
+
+ERROR: "foo* bar" should be "foo *bar"
+#208: FILE: ../../main.c:208:
++	char* dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName + 2)));
+
+ERROR: space required before the open parenthesis '('
+#210: FILE: ../../main.c:210:
++	if(!dir) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#210: FILE: ../../main.c:210:
++	if(!dir) {
++		exit(1);
++	}
+
+ERROR: "foo** bar" should be "foo **bar"
+#228: FILE: ../../main.c:228:
++void parseFile(FILE *in, FILE *out, HashMap *map, char** directories, int numDir, char* inFileName)
+
+ERROR: "foo* bar" should be "foo *bar"
+#228: FILE: ../../main.c:228:
++void parseFile(FILE *in, FILE *out, HashMap *map, char** directories, int numDir, char* inFileName)
+
+WARNING: const array should probably be static const
+#235: FILE: ../../main.c:235:
++	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
+
+ERROR: space required before the open parenthesis '('
+#240: FILE: ../../main.c:240:
++		if(!line_copy) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#240: FILE: ../../main.c:240:
++		if(!line_copy) {
++			exit(1);
++		}
+
+ERROR: space required before the open parenthesis '('
+#246: FILE: ../../main.c:246:
++		if(!result) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#246: FILE: ../../main.c:246:
++		if(!result) {
++			exit(1);
++		}
+
+WARNING: space prohibited between function name and open parenthesis '('
+#260: FILE: ../../main.c:260:
++			delete (map, key);
+
+WARNING: Missing a blank line after declarations
+#264: FILE: ../../main.c:264:
++			char *val = get(map, token);
++			if (val != NULL) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#264: FILE: ../../main.c:264:
++			if (val != NULL) {
++				token = val;
++			}
+
+WARNING: braces {} are not necessary for any arm of this statement
+#267: FILE: ../../main.c:267:
++			if (!strcmp(token, "0")) {
+[...]
++			} else {
+[...]
+
+WARNING: braces {} are not necessary for any arm of this statement
+#274: FILE: ../../main.c:274:
++			if (get(map, token) != NULL) {
+[...]
++			} else {
+[...]
+
+WARNING: braces {} are not necessary for any arm of this statement
+#280: FILE: ../../main.c:280:
++			if (get(map, token) != NULL) {
+[...]
++			} else {
+[...]
+
+ERROR: "foo* bar" should be "foo *bar"
+#289: FILE: ../../main.c:289:
++			char* inputDir = getDirectory(inFileName);
+
+WARNING: braces {} are not necessary for single statement blocks
+#306: FILE: ../../main.c:306:
++				if (value != NULL) {
++					result = replace(result, token, value);
++				}
+
+ERROR: "foo** bar" should be "foo **bar"
+#320: FILE: ../../main.c:320:
++char** getArgs(int argc, char **argv, char **input, char **output, HashMap *map, int *numDir)
+
+ERROR: trailing whitespace
+#321: FILE: ../../main.c:321:
++{^I$
+
+ERROR: "foo** bar" should be "foo **bar"
+#323: FILE: ../../main.c:323:
++	char** directories = NULL;
+
+WARNING: Missing a blank line after declarations
+#324: FILE: ../../main.c:324:
++	char** directories = NULL;
++	for (int i = 1; i < argc; i++) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#325: FILE: ../../main.c:325:
++		if (!strncmp(argv[i], "-I", 2)) {
++			*numDir += 1;
++		}
+
+ERROR: "(foo*)" should be "(foo *)"
+#330: FILE: ../../main.c:330:
++		directories = malloc((*numDir) * sizeof(char*));
+
+ERROR: space required before the open parenthesis '('
+#332: FILE: ../../main.c:332:
++		if(!directories) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#332: FILE: ../../main.c:332:
++		if(!directories) {
++			exit(1);
++		}
+
+WARNING: Missing a blank line after declarations
+#342: FILE: ../../main.c:342:
++				char *key, *val;
++				if (strlen(argv[i]) == 2) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#350: FILE: ../../main.c:350:
++				if (val == NULL) {
++					val = "";
++				}
+
+ERROR: space required before the open parenthesis '('
+#361: FILE: ../../main.c:361:
++					if(!directories[currDir]) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#361: FILE: ../../main.c:361:
++					if(!directories[currDir]) {
++						exit(1);
++					}
+
+ERROR: trailing whitespace
+#367: FILE: ../../main.c:367:
++^I^I^I^I^I$
+
+ERROR: space required before the open parenthesis '('
+#371: FILE: ../../main.c:371:
++					if(!directories[currDir]) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#371: FILE: ../../main.c:371:
++					if(!directories[currDir]) {
++						exit(1);
++					}
+
+ERROR: space required before the open parenthesis '('
+#385: FILE: ../../main.c:385:
++					if(!output) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#385: FILE: ../../main.c:385:
++					if(!output) {
++						exit(1);
++					}
+
+ERROR: space required before the open parenthesis '('
+#396: FILE: ../../main.c:396:
++					if(!output) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#396: FILE: ../../main.c:396:
++					if(!output) {
++						exit(1);
++					}	
+
+ERROR: trailing whitespace
+#398: FILE: ../../main.c:398:
++^I^I^I^I^I}^I$
+
+ERROR: trailing whitespace
+#399: FILE: ../../main.c:399:
++^I^I^I^I^I$
+
+ERROR: space required before the open parenthesis '('
+#408: FILE: ../../main.c:408:
++				if(!input) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#408: FILE: ../../main.c:408:
++				if(!input) {
++					exit(1);
++				}
+
+ERROR: space required before the open parenthesis '('
+#417: FILE: ../../main.c:417:
++				if(!output) {
+
+WARNING: braces {} are not necessary for single statement blocks
+#417: FILE: ../../main.c:417:
++				if(!output) {
++					exit(1);
++				}
+
+WARNING: braces {} are not necessary for single statement blocks
+#449: FILE: ../../main.c:449:
++		if (inFile == NULL) {
++			return 1;
++		}
+
+WARNING: braces {} are not necessary for any arm of this statement
+#456: FILE: ../../main.c:456:
++	if (outputFileName) {
+[...]
++	} else {
+[...]
+
+WARNING: braces {} are not necessary for any arm of this statement
+#462: FILE: ../../main.c:462:
++	if (!inputFileName) {
+[...]
++	} else {
+[...]
+
+ERROR: trailing whitespace
+#466: FILE: ../../main.c:466:
++^I}^I$
+
+WARNING: braces {} are not necessary for single statement blocks
+#478: FILE: ../../main.c:478:
++	for (int i = 0; i < numDir; i++) {
++		free(directories[i]);
++	}
+
+total: 47 errors, 55 warnings, 485 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace.
+
+NOTE: Whitespace errors detected.
+      You may wish to use scripts/cleanpatch or scripts/cleanfile
+
+../../main.c has style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+      them to the maintainer, see CHECKPATCH in MAINTAINERS.
