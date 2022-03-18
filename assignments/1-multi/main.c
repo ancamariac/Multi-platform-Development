@@ -14,10 +14,13 @@ FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDi
 		free(filePath);
         return file;
     }
+	
+	free(filePath);
 
 	for (int i = 0; i < numDir; i++) {
-		char* path = malloc((strlen(directories[i]) + strlen(fileName) + 1) * sizeof(char));
+		char* path = malloc((strlen(directories[i]) + strlen(fileName) + 2) * sizeof(char));
 		strcpy(path, directories[i]);
+		strcat(path, "/");
 		strcat(path, fileName);
 		
 		if ((file = fopen(path, "r")))
@@ -182,7 +185,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 
 char* getDirectory(char* path) {
 	
-	if (path == "") {
+	if (!strcmp(path, "")) {
 		return path;
 	}
 
