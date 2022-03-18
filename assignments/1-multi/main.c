@@ -433,7 +433,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 					    malloc((strlen(argv[i + 1]) + 1) *
 						   sizeof(char));
 
-					if (!output) {
+					if (!*output) {
 						exit(12);
 					}
 
@@ -444,7 +444,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 					    malloc((strlen(argv[i] + 2) + 1) *
 						   sizeof(char));
 
-					if (!output) {
+					if (!*output) {
 						exit(12);
 					}
 
@@ -456,7 +456,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 				*input = malloc((strlen(argv[i]) + 1) *
 						sizeof(char));
 
-				if (!input) {
+				if (!*input) {
 					exit(12);
 				}
 
@@ -465,7 +465,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 				*output = malloc((strlen(argv[i]) + 1) *
 						 sizeof(char));
 
-				if (!output) {
+				if (!*output) {
 					exit(12);
 				}
 
