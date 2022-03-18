@@ -27,7 +27,7 @@ HashMap createHashMap(int size)
 int hashFunc(char *key, int size)
 {
 	int hash = 0;
-	const char* p = NULL;
+	const char *p = NULL;
 
 	for (p = key; *p; p++) {
 		hash += (unsigned char)(*p);
@@ -50,7 +50,6 @@ void deleteMap(HashMap *map)
 
 void insert(HashMap *map, char *key, char *value)
 {
-
 	// aici verific daca e prea plin map (mai mult de 75%)
 	// trebuie sa fac map nou pentru ca hashul se calculeaza in functie de
 	// size se modifica size => hashul va returna alt index decat cel
@@ -58,9 +57,11 @@ void insert(HashMap *map, char *key, char *value)
 	// gaseste elementul
 
 	int i = 0;
+	int index = 0;
 
 	if (map->cnt * 4 > map->size * 3) {
 		HashMap newMap = createHashMap(2 * map->size);
+		
 		for (i = 0; i < map->size; i++) {
 			if (map->elem[i].key != NULL) {
 				insert(&newMap, map->elem[i].key,
@@ -71,7 +72,7 @@ void insert(HashMap *map, char *key, char *value)
 		*map = newMap;
 	}
 
-	int index = hashFunc(key, map->size);
+	index = hashFunc(key, map->size);
 
 	while (1) {
 		if (map->elem[index].key == NULL) {
@@ -99,7 +100,10 @@ void insert(HashMap *map, char *key, char *value)
 
 char *get(HashMap *map, char *key)
 {
-	int index = hashFunc(key, map->size);
+	int index = 0;
+	
+	index = hashFunc(key, map->size);
+
 	while (1) {
 		if (map->elem[index].key == NULL) {
 			return NULL;
@@ -114,7 +118,10 @@ char *get(HashMap *map, char *key)
 
 void delete(HashMap *map, char *key)
 {
-	int index = hashFunc(key, map->size);
+	int index = 0;
+	
+	index = hashFunc(key, map->size);
+
 	while (1) {
 		if (map->elem[index].key == NULL) {
 			return;
