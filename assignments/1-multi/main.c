@@ -8,7 +8,10 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 	FILE *file;
 	int i = 0;
 
-	char *filePath =
+	char *path = NULL;
+	char *filePath = NULL;
+
+	filePath =
 	    malloc((strlen(currentDir) + strlen(fileName) + 1) * sizeof(char));
 
 	if (!filePath) {
@@ -28,7 +31,7 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 	free(filePath);
 
 	for (i = 0; i < numDir; i++) {
-		char *path =
+		path =
 		    malloc((strlen(directories[i]) + strlen(fileName) + 2) *
 			   sizeof(char));
 
@@ -103,6 +106,9 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 	int read = 0;
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 
+	char *val = NULL;
+	char *token = NULL;
+
 	if (done == 1) {
 		while ((read = getline(&line, &len, in)) != -1) {
 			if (!strncmp(line, "#endif", 6)) {
@@ -123,9 +129,9 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 				free(line);
 				return;
 			} else if (!strncmp(line, "#elif", 5)) {
-				char *token = strtok(line, delimiters);
+				token = strtok(line, delimiters);
 				token = strtok(NULL, "\n");
-				char *val = get(map, token);
+				val = get(map, token);
 				if (val != NULL) {
 					token = val;
 				}
@@ -166,6 +172,9 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 	size_t len = 0;
 	int read = 0;
 
+	char *value = NULL;
+	char *key = NULL;
+
 	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
 
 	if (cond == 0) {
@@ -182,9 +191,9 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 				return;
 			} else {
 				if (!strncmp(line, "#define", 7)) {
-					char *key = strtok(line, delimiters);
+					key = strtok(line, delimiters);
 					key = strtok(NULL, delimiters);
-					char *value = strtok(NULL, "\n");
+					value = strtok(NULL, "\n");
 
 					if (value) {
 						insert(map, key, value);
@@ -192,7 +201,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 						insert(map, key, "");
 					}
 				} else if (!strncmp(line, "#undef", 6)) {
-					char *key = strtok(line, delimiters);
+					key = strtok(line, delimiters);
 					key = strtok(NULL, delimiters);
 					delete (map, key);
 				} else {
@@ -205,21 +214,23 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 
 char *getDirectory(char *path)
 {
+	char *dir = NULL;
+	char *fileName = NULL;
+
+	int i = 0;
 
 	if (!strcmp(path, "")) {
 		return path;
 	}
 
-	char *fileName = strrchr(path, '/');
+	fileName = strrchr(path, '/');
 
-	char *dir =
+	dir =
 	    malloc(sizeof(char) * (strlen(path) - strlen(fileName + 2)));
 
 	if (!dir) {
 		exit(12);
 	}
-
-	int i = 0;
 
 	while (path != fileName) {
 		dir[i] = path[0];
@@ -236,22 +247,28 @@ char *getDirectory(char *path)
 void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	       int numDir, char *inFileName)
 {
-	char *line = NULL;
 	size_t len = 0;
 	int read = 0;
-	//char* resul = NULL;
+
+	char *line = NULL;
+	char *result = NULL;
+	char *line_copy = NULL;
+	char *inputDir = NULL;
+	char *val = NULL;
+
+	FILE *incFile = NULL;
 
 	char *token = NULL, *key = NULL, *value = NULL;
 	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 
 	while ((read = getline(&line, &len, in)) != -1) {
-		char *line_copy = malloc((strlen(line) + 1) * sizeof(char));
+		line_copy = malloc((strlen(line) + 1) * sizeof(char));
 
 		if (!line_copy) {
 			exit(12);
 		}
 
-		char *result = malloc((strlen(line) + 1) * sizeof(char));
+		result = malloc((strlen(line) + 1) * sizeof(char));
 
 		if (!result) {
 			exit(12);
@@ -270,7 +287,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			delete (map, key);
 		} else if (!strcmp(token, "#if")) {
 			token = strtok(NULL, "\n");
-			char *val = get(map, token);
+			val = get(map, token);
 			if (val != NULL) {
 				token = val;
 			}
@@ -296,9 +313,9 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		} else if (!strcmp(token, "#include")) {
 			token = strtok(line, delimiters);
 			token = strtok(NULL, " \"");
-			char *inputDir = getDirectory(inFileName);
+			inputDir = getDirectory(inFileName);
 
-			FILE *incFile =
+			incFile =
 			    getIncFile(token, directories, numDir, inputDir);
 
 			if (incFile != NULL) {
