@@ -6,12 +6,13 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 		 char *currentDir)
 {
 	FILE *file;
+	int i = 0;
 
 	char *filePath =
 	    malloc((strlen(currentDir) + strlen(fileName) + 1) * sizeof(char));
 
 	if (!filePath) {
-		exit(1);
+		exit(12);
 	}
 
 	strcpy(filePath, currentDir);
@@ -26,13 +27,13 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 
 	free(filePath);
 
-	for (int i = 0; i < numDir; i++) {
+	for (i = 0; i < numDir; i++) {
 		char *path =
 		    malloc((strlen(directories[i]) + strlen(fileName) + 2) *
 			   sizeof(char));
 
 		if (!path) {
-			exit(1);
+			exit(12);
 		}
 
 		strcpy(path, directories[i]);
@@ -78,7 +79,7 @@ char *replace(char *line, char *key, char *value)
 		result = malloc(len_res * sizeof(char));
 
 		if (!result) {
-			exit(1);
+			exit(12);
 		}
 
 		strncpy(result, line, i);
@@ -136,7 +137,7 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 
 				ifelse(in, out, map, 1, 0);
 				free(line);
-				return;			
+				return;
 			}
 		}
 	} else {
@@ -215,7 +216,7 @@ char *getDirectory(char *path)
 	    malloc(sizeof(char) * (strlen(path) - strlen(fileName + 2)));
 
 	if (!dir) {
-		exit(1);
+		exit(12);
 	}
 
 	int i = 0;
@@ -238,6 +239,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	char *line = NULL;
 	size_t len = 0;
 	int read = 0;
+	//char* resul = NULL;
 
 	char *token = NULL, *key = NULL, *value = NULL;
 	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
@@ -246,13 +248,13 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		char *line_copy = malloc((strlen(line) + 1) * sizeof(char));
 
 		if (!line_copy) {
-			exit(1);
+			exit(12);
 		}
 
 		char *result = malloc((strlen(line) + 1) * sizeof(char));
 
 		if (!result) {
-			exit(1);
+			exit(12);
 		}
 
 		strcpy(line_copy, line);
@@ -332,7 +334,9 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 {
 	int currDir = 0;
 	char **directories = NULL;
-	for (int i = 1; i < argc; i++) {
+	int i = 0;
+
+	for (i = 1; i < argc; i++) {
 		if (!strncmp(argv[i], "-I", 2)) {
 			*numDir += 1;
 		}
@@ -341,11 +345,11 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 		directories = malloc((*numDir) * sizeof(char *));
 
 		if (!directories) {
-			exit(1);
+			exit(12);
 		}
 	}
 	// end
-	for (int i = 1; i < argc; i++) {
+	for (i = 1; i < argc; i++) {
 		if (argv[i] && argv[i][0] == '-') {
 			if (argv[i][1] == 'D') {
 				char *key, *val;
@@ -371,7 +375,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 						   sizeof(char));
 
 					if (!directories[currDir]) {
-						exit(1);
+						exit(12);
 					}
 
 					strcpy(directories[currDir],
@@ -384,7 +388,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 						   sizeof(char));
 
 					if (!directories[currDir]) {
-						exit(1);
+						exit(12);
 					}
 
 					strcpy(directories[currDir],
@@ -399,7 +403,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 						   sizeof(char));
 
 					if (!output) {
-						exit(1);
+						exit(12);
 					}
 
 					strcpy(*output, argv[i + 1]);
@@ -410,7 +414,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 						   sizeof(char));
 
 					if (!output) {
-						exit(1);
+						exit(12);
 					}
 
 					strcpy(*output, argv[i] + 2);
@@ -422,7 +426,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 						sizeof(char));
 
 				if (!input) {
-					exit(1);
+					exit(12);
 				}
 
 				strcpy(*input, argv[i]);
@@ -431,7 +435,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 						 sizeof(char));
 
 				if (!output) {
-					exit(1);
+					exit(12);
 				}
 
 				strcpy(*output, argv[i]);
@@ -453,6 +457,8 @@ int main(int argc, char **argv)
 	char **directories = NULL;
 	int numDir = 0;
 	// end
+
+	int i = 0;
 
 	HashMap map = createHashMap(6);
 	FILE *inFile = NULL;
@@ -493,7 +499,7 @@ int main(int argc, char **argv)
 
 	deleteMap(&map);
 	// start
-	for (int i = 0; i < numDir; i++) {
+	for (i = 0; i < numDir; i++) {
 		free(directories[i]);
 	}
 	free(directories);

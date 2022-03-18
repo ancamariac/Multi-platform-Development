@@ -7,15 +7,17 @@ HashMap createHashMap(int size)
 {
 	HashMap newMap;
 
+	int i = 0;
+
 	newMap.size = size;
 	newMap.cnt = 0;
 	newMap.elem = malloc(newMap.size * sizeof(Elem));
 
 	if (!newMap.elem) 
-		exit(1);
+		exit(12);
 	
 
-	for (int i = 0; i < newMap.size; i++) {
+	for (i = 0; i < newMap.size; i++) {
 		newMap.elem[i].key = NULL;
 		newMap.elem[i].value = NULL;
 	}
@@ -25,7 +27,9 @@ HashMap createHashMap(int size)
 int hashFunc(char *key, int size)
 {
 	int hash = 0;
-	for (const char *p = key; *p; p++) {
+	const char* p = NULL;
+
+	for (p = key; *p; p++) {
 		hash += (unsigned char)(*p);
 	}
 	return hash % size;
@@ -33,7 +37,9 @@ int hashFunc(char *key, int size)
 
 void deleteMap(HashMap *map)
 {
-	for (int i = 0; i < map->size; i++) {
+	int i = 0;
+
+	for (i = 0; i < map->size; i++) {
 		if (map->elem[i].key) {
 			free(map->elem[i].key);
 			free(map->elem[i].value);
@@ -50,9 +56,12 @@ void insert(HashMap *map, char *key, char *value)
 	// size se modifica size => hashul va returna alt index decat cel
 	// calculat anterior pentru elementele deja existente index gresit => nu
 	// gaseste elementul
+
+	int i = 0;
+
 	if (map->cnt * 4 > map->size * 3) {
 		HashMap newMap = createHashMap(2 * map->size);
-		for (int i = 0; i < map->size; i++) {
+		for (i = 0; i < map->size; i++) {
 			if (map->elem[i].key != NULL) {
 				insert(&newMap, map->elem[i].key,
 				       map->elem[i].value);
@@ -69,13 +78,13 @@ void insert(HashMap *map, char *key, char *value)
 			map->elem[index].key = malloc(strlen(key) + 1);
 
 			if (!map->elem[index].key) {
-				exit(1);
+				exit(12);
 			}
 
 			map->elem[index].value = malloc(strlen(value) + 1);
 
 			if (!map->elem[index].value) {
-				exit(1);
+				exit(12);
 			}
 
 			strcpy(map->elem[index].key, key);
