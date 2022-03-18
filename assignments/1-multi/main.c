@@ -520,10 +520,12 @@ int main(int argc, char **argv)
 			  inputFileName);
 	}
 
+	printf("aaaaaa\n");
 	fflush(inFile);
 	fclose(inFile);
 	free(inputFileName);
 
+	printf("bbbbbbbbbb\n");
 	fflush(outFile);
 	fclose(outFile);
 	free(outputFileName);
