@@ -2,12 +2,18 @@
 #include <fcntl.h>
 
 // start
-FILE* getIncFile(char* fileName, char** directories, int numDir) {
+FILE* getIncFile(char* fileName, char** directories, int numDir, char* currentDir) {
 	FILE *file;
-    if ((file = fopen(fileName, "r")))
+
+	char* filePath = malloc((strlen(currentDir) + strlen(fileName) + 1) * sizeof(char));
+	strcpy(filePath, currentDir);
+	strcat(filePath, fileName);
+
+    if ((file = fopen(filePath, "r")))
     {
         return file;
     }
+
 	for (int i = 0; i < numDir; i++) {
 		char* path = malloc((strlen(directories[i]) + strlen(fileName) + 1) * sizeof(char));
 		strcpy(path, directories[i]);
@@ -172,7 +178,23 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 	}
 }
 
-void parseFile(FILE *in, FILE *out, HashMap *map, char** directories, int numDir)
+char* getDirectory(char* path) {
+	char* fileName = strrchr(path, "/");
+
+	char* dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName + 1)));
+
+	int i = 0;
+
+	while (path != fileName) {
+		dir[i] = path[0];
+		i++;
+		path++;
+	}
+
+	return dir;
+}
+
+void parseFile(FILE *in, FILE *out, HashMap *map, char** directories, int numDir, char* inFileName)
 {
 	char *line = NULL;
 	size_t len = 0;
@@ -223,11 +245,16 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char** directories, int numDir
 		} else if (!strcmp(token, "#include")) {
 			token = strtok(line, delimiters);
 			token = strtok(NULL, " \"");
-			FILE *incFile = getIncFile(token, directories, numDir);
+			char* inputDir = getDirectory(inFileName);
+
+			FILE *incFile = getIncFile(token, directories, numDir, inputDir);
+
 			if (incFile != NULL) {
-				parseFile(incFile, out, map, directories, numDir);
+				parseFile(incFile, out, map, directories, numDir, inFileName);
+				fclose(incFile);
 			}
-			fclose(incFile);
+
+			free(inputDir);
 		}
 		// end
 		else {
@@ -354,7 +381,11 @@ int main(int argc, char **argv)
 		outFile = stdout;
 	}
 
-	parseFile(inFile, outFile, &map, directories, numDir);
+	if (!inputFileName) {
+		parseFile(inFile, outFile, &map, directories, numDir, "");
+	} else {
+		parseFile(inFile, outFile, &map, directories, numDir, inputFileName);
+	}	
 
 	fflush(inFile);
 	fclose(inFile);
