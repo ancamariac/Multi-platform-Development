@@ -55,7 +55,6 @@ void insert(HashMap *map, char *key, char *value)
 	// size se modifica size => hashul va returna alt index decat cel
 	// calculat anterior pentru elementele deja existente index gresit => nu
 	// gaseste elementul
-
 	int i = 0;
 	int index = 0;
 
