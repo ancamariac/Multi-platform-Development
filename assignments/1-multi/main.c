@@ -1,4 +1,3 @@
-
 #include <fcntl.h>
 #include "helper.h"
 
@@ -334,7 +333,6 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 			free(inputDir);
 		}
-		
 		else {
 			while (token != NULL) {
 				value = get(map, token);
