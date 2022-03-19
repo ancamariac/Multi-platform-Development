@@ -28,7 +28,7 @@ int hashFunc(char *key, int size)
 	int hash = 0;
 	const char *p = NULL;
 
-	for (p = key; *p; p++) 
+	for (p = key; *p; p++)
 		hash += (unsigned char)(*p);
 	return hash % size;
 }
@@ -58,6 +58,7 @@ void insert(HashMap *map, char *key, char *value)
 
 	if (map->cnt * 4 > map->size * 3) {
 		HashMap newMap = createHashMap(2 * map->size);
+
 		for (i = 0; i < map->size; i++) {
 			if (map->elem[i].key != NULL) {
 				insert(&newMap, map->elem[i].key,
@@ -95,12 +96,13 @@ void insert(HashMap *map, char *key, char *value)
 char *get(HashMap *map, char *key)
 {
 	int index = 0;
+
 	index = hashFunc(key, map->size);
 
 	while (1) {
-		if (map->elem[index].key == NULL) 
+		if (map->elem[index].key == NULL)
 			return NULL;
-		else if (!strcmp(map->elem[index].key, key)) 
+		else if (!strcmp(map->elem[index].key, key))
 			return map->elem[index].value;
 		index += 1;
 		index %= map->size;
@@ -110,6 +112,7 @@ char *get(HashMap *map, char *key)
 void delete(HashMap *map, char *key)
 {
 	int index = 0;
+
 	index = hashFunc(key, map->size);
 
 	while (1) {
