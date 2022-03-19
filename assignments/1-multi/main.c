@@ -269,7 +269,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 	FILE *incFile = NULL;
 
-	char *token = NULL, *key = NULL, *value = NULL;
+	char *token = NULL, *key = NULL, *value = NULL, *another_value = NULL;
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 
 	read = getLine(&line, in);
@@ -290,7 +290,10 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 		if (!strcmp(token, "#define")) {
 			key = strtok(NULL, delimiters);
-			value = strtok(NULL, "\n");
+			value = strtok(NULL, " ");
+			//another_value = strtok(NULL)
+			//if (anothe)
+
 			insert(map, key, value);
 		} else if (!strcmp(token, "#undef")) {
 			key = strtok(NULL, "\n");
