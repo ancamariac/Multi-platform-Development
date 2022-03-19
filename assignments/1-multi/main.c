@@ -35,7 +35,6 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 
 	if (!filePath)
 		exit(12);
-	
 	strcpy(filePath, currentDir);
 	strcat(filePath, fileName);
 
@@ -54,7 +53,6 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 
 		if (!path)
 			exit(12);
-		
 		strcpy(path, directories[i]);
 		strcat(path, "/");
 		strcat(path, fileName);
@@ -211,14 +209,14 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 				if (value)
 					insert(map, key, value);
 				else
-					insert(map, key, "");	
+					insert(map, key, "");
 			} else if (!strncmp(line, "#undef", 6)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				delete(map, key);
 			} else {
 				fputs(line, out);
-			}		
+			}
 		}
 	}
 }
@@ -301,22 +299,22 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			val = get(map, token);
 
 			if (val != NULL)
-				token = val;		
+				token = val;	
 			if (!strcmp(token, "0"))
 				ifelse(in, out, map, 0, 0);
 			else
-				ifelse(in, out, map, 1, 0);			
+				ifelse(in, out, map, 1, 0);	
 		} else if (!strcmp(token, "#ifdef")) {
 			token = strtok(NULL, "\n");
 			if (get(map, token) != NULL)
 				ifdef(in, out, map, 1);
 			else
-				ifdef(in, out, map, 0);			
+				ifdef(in, out, map, 0);		
 		} else if (!strcmp(token, "#ifndef")) {
 			if (get(map, token) != NULL)
 				ifdef(in, out, map, 0);
 			else
-				ifdef(in, out, map, 1);			
+				ifdef(in, out, map, 1);	
 		} else if (!strcmp(token, "#include")) {
 			token = strtok(line, "\"");
 			token = strtok(NULL, " \"");
@@ -339,7 +337,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			while (token != NULL) {
 				value = get(map, token);
 				if (value != NULL)
-					result = replace(result, token, value);				
+					result = replace(result, token, value);	
 				token = strtok(NULL, delimiters);
 			}
 			fputs(result, out);
@@ -348,7 +346,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		free(line_copy);
 		free(result);
 		free(line);
-		line = NULL;	
+		line = NULL;
 		read = getLine(&line, in);
 	}
 	free(line);
@@ -363,12 +361,12 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 
 	for (i = 1; i < argc; i++) {
 		if (!strncmp(argv[i], "-I", 2))
-			*numDir += 1;		
+			*numDir += 1;
 	}
 	if (*numDir != 0) {
 		directories = malloc((*numDir) * sizeof(char *));
 		if (!directories)
-			exit(12);		
+			exit(12);
 	}
 
 	for (i = 1; i < argc; i++) {
@@ -406,7 +404,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 					    malloc((strlen(argv[i] + 2) + 1) *
 						   sizeof(char));
 
-					if (!directories[currDir]) 
+					if (!directories[currDir])
 						exit(12);
 
 					strcpy(directories[currDir],
@@ -441,7 +439,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 				*input = malloc((strlen(argv[i]) + 1) *
 						sizeof(char));
 
-				if (!(*input)) 
+				if (!(*input))
 					exit(12);
 
 				strcpy(*input, argv[i]);
@@ -483,20 +481,20 @@ int main(int argc, char **argv)
 
 	if (inputFileName) {
 		inFile = fopen(inputFileName, "r");
-		if (inFile == NULL) 
+		if (inFile == NULL)
 			return 1;
 	} else {
 		inFile = stdin;
 	}
 
-	if (outputFileName) 
+	if (outputFileName)
 		outFile = fopen(outputFileName, "w+");
-	else 
+	else
 		outFile = stdout;
 
-	if (!inputFileName) 
+	if (!inputFileName)
 		parseFile(inFile, outFile, &map, directories, numDir, "");
-	else 
+	else
 		parseFile(inFile, outFile, &map, directories, numDir,
 			  inputFileName);
 
@@ -510,9 +508,8 @@ int main(int argc, char **argv)
 
 	deleteMap(&map);
 
-	for (i = 0; i < numDir; i++) 
+	for (i = 0; i < numDir; i++)
 		free(directories[i]);
-	
 	free(directories);
 
 	return 0;
