@@ -1,0 +1,20 @@
+WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+#1: FILE: ../../main.c:1:
++
+
+ERROR: trailing whitespace
+#337: FILE: ../../main.c:337:
++^I^I$
+
+total: 1 errors, 1 warnings, 515 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace.
+
+NOTE: Whitespace errors detected.
+      You may wish to use scripts/cleanpatch or scripts/cleanfile
+
+../../main.c has style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+      them to the maintainer, see CHECKPATCH in MAINTAINERS.
