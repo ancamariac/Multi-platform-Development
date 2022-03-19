@@ -7,12 +7,12 @@ int getLine(char **line, FILE *in)
 	char readline[MAXLEN];
 	int len;
 
-	if(*line) {
+	if (*line) {
 		free(*line);
 		*line = NULL;
 	}
 
-	if(fgets(readline, MAXLEN, in) == NULL) {
+	if (fgets(readline, MAXLEN, in) == NULL) {
 		return -1;
 	}
 
@@ -63,7 +63,7 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 		strcat(path, "/");
 		strcat(path, fileName);
 
-		if ((file = fopen(path, "r"))) {
+		if (file = fopen(path, "r")) {
 			free(path);
 			return file;
 		}
