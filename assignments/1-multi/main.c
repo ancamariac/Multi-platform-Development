@@ -1,19 +1,19 @@
 #include "helper.h"
 #include <fcntl.h>
+#define MAXLEN 256
 
 int getLine(char **line, FILE *in)
 {
-	int maxLen = 256;
+	char readline[MAXLEN];
 	int len;
 
-	*line = malloc(maxLen * sizeof(char));
-
-	if (fgets(*line, maxLen, in) == NULL) {
+	if (fgets(readline, MAXLEN, in) == NULL) {
 		return -1;
 	}
 
-	len = strlen(*line);
-
+	len = strlen(readline);
+	*line = malloc((len + 1) * sizeof(char));
+	strcpy(*line, readline);
 	return len;
 }
 
@@ -94,7 +94,7 @@ char *replace(char *line, char *key, char *value)
 	}
 
 	if (found) {
-		result = malloc(len_res * sizeof(char));
+		result = malloc((len_res + 1) * sizeof(char));
 
 		if (!result) {
 			exit(12);
@@ -117,7 +117,6 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 {
 
 	char *line = NULL;
-	size_t len = 0;
 	int read = 0;
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 
@@ -184,7 +183,6 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 {
 	char *line = NULL;
-	size_t len = 0;
 	int read = 0;
 
 	char *value = NULL;
@@ -239,8 +237,13 @@ char *getDirectory(char *path)
 	}
 
 	fileName = strrchr(path, '/');
+	if (!fileName) {
+		dir = malloc(sizeof(char));
+		strcpy(dir, "");
+		return dir;
+	}
 
-	dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName + 3)));
+	dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName) + 2));
 
 	if (!dir) {
 		exit(12);
@@ -261,7 +264,6 @@ char *getDirectory(char *path)
 void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	       int numDir, char *inFileName)
 {
-	size_t len = 0;
 	int read = 0;
 
 	char *line = NULL;
@@ -275,7 +277,8 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	char *token = NULL, *key = NULL, *value = NULL;
 	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 
-	while ((read = getLine(&line, in)) != -1) {
+	read = getLine(&line, in);
+	while (read != -1) {
 		line_copy = malloc((strlen(line) + 1) * sizeof(char));
 
 		if (!line_copy) {
@@ -325,10 +328,9 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			}
 			// start
 		} else if (!strcmp(token, "#include")) {
-			token = strtok(line, delimiters);
+			token = strtok(line, "\"");
 			token = strtok(NULL, " \"");
 			inputDir = getDirectory(inFileName);
-
 			incFile =
 			    getIncFile(token, directories, numDir, inputDir);
 
@@ -356,6 +358,11 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 		free(line_copy);
 		free(result);
+		
+		free(line);
+		line = NULL;
+		
+		read = getLine(&line, in);
 	}
 	free(line);
 }
@@ -373,7 +380,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 		}
 	}
 	if (*numDir != 0) {
-		directories = malloc((*numDir + 1) * sizeof(char *));
+		directories = malloc((*numDir) * sizeof(char *));
 
 		if (!directories) {
 			exit(12);
