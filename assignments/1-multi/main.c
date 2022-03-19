@@ -290,9 +290,17 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 		if (!strcmp(token, "#define")) {
 			key = strtok(NULL, delimiters);
-			value = strtok(NULL, " ");
-			//another_value = strtok(NULL)
-			//if (anothe)
+			value = strtok(NULL, "/n");
+
+			if (strchr(value, " ")) {
+				while (value != NULL) {
+					another_value = get(map, value);
+					if (another_value != NULL)
+						result = replace(result, value, another_value);
+					value = strtok(NULL, delimiters);
+				}
+				fputs(result, out);
+			}
 
 			insert(map, key, value);
 		} else if (!strcmp(token, "#undef")) {
