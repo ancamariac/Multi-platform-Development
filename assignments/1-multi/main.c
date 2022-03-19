@@ -7,7 +7,12 @@ int getLine(char **line, FILE *in)
 	char readline[MAXLEN];
 	int len;
 
-	if (fgets(readline, MAXLEN, in) == NULL) {
+	if(*line) {
+		free(*line);
+		*line = NULL;
+	}
+
+	if(fgets(readline, MAXLEN, in) == NULL) {
 		return -1;
 	}
 
@@ -30,7 +35,7 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 	filePath =
 	    malloc((strlen(currentDir) + strlen(fileName) + 1) * sizeof(char));
 
-	if (!filePath) {
+	if(!filePath) {
 		exit(12);
 	}
 
