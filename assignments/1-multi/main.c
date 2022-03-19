@@ -125,7 +125,7 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 	char *token = NULL;
 
 	if (done == 1) {
-		while ((read = getline(&line, &len, in)) != -1) {
+		while ((read = getLine(&line, in)) != -1) {
 			if (!strncmp(line, "#endif", 6)) {
 				free(line);
 				return;
@@ -135,7 +135,7 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 	}
 
 	if (cond == 0) {
-		while ((read = getline(&line, &len, in)) != -1) {
+		while ((read = getLine(&line, in)) != -1) {
 			if (!strncmp(line, "#endif", 6)) {
 				free(line);
 				return;
@@ -162,7 +162,7 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 			}
 		}
 	} else {
-		while ((read = getline(&line, &len, in)) != -1) {
+		while ((read = getLine(&line, in)) != -1) {
 			if (!strncmp(line, "#endif", 6)) {
 				free(line);
 				return;
@@ -193,14 +193,14 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
 
 	if (cond == 0) {
-		while ((read = getline(&line, &len, in)) != -1) {
+		while ((read = getLine(&line, in)) != -1) {
 			if (!strncmp(line, "#endif", 6)) {
 				free(line);
 				return;
 			}
 		}
 	} else {
-		while ((read = getline(&line, &len, in)) != -1) {
+		while ((read = getLine(&line, in)) != -1) {
 			if (!strncmp(line, "#endif", 6)) {
 				free(line);
 				return;
@@ -240,7 +240,7 @@ char *getDirectory(char *path)
 
 	fileName = strrchr(path, '/');
 
-	dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName + 2)));
+	dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName + 3)));
 
 	if (!dir) {
 		exit(12);
@@ -275,7 +275,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	char *token = NULL, *key = NULL, *value = NULL;
 	const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 
-	while ((read = getline(&line, &len, in)) != -1) {
+	while ((read = getLine(&line, in)) != -1) {
 		line_copy = malloc((strlen(line) + 1) * sizeof(char));
 
 		if (!line_copy) {
@@ -373,7 +373,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 		}
 	}
 	if (*numDir != 0) {
-		directories = malloc((*numDir) * sizeof(char *));
+		directories = malloc((*numDir + 1) * sizeof(char *));
 
 		if (!directories) {
 			exit(12);
