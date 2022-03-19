@@ -1,6 +1,7 @@
-// TEMA 1 SO
-#include "helper.h"
+
 #include <fcntl.h>
+#include "helper.h"
+
 #define MAXLEN 256
 
 int getLine(char **line, FILE *in)
@@ -333,7 +334,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 			free(inputDir);
 		}
-		// end
+		
 		else {
 			while (token != NULL) {
 				value = get(map, token);
@@ -466,11 +467,8 @@ int main(int argc, char **argv)
 {
 	char *inputFileName = NULL;
 	char *outputFileName = NULL;
-	// start
 	char **directories = NULL;
 	int numDir = 0;
-	// end
-
 	int i = 0;
 
 	HashMap map = createHashMap(6);
