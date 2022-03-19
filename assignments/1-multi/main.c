@@ -1,3 +1,4 @@
+// TEMA 1 SO
 #include "helper.h"
 #include <fcntl.h>
 #define MAXLEN 256
@@ -299,22 +300,22 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			val = get(map, token);
 
 			if (val != NULL)
-				token = val;	
+				token = val;
 			if (!strcmp(token, "0"))
 				ifelse(in, out, map, 0, 0);
 			else
-				ifelse(in, out, map, 1, 0);	
+				ifelse(in, out, map, 1, 0);
 		} else if (!strcmp(token, "#ifdef")) {
 			token = strtok(NULL, "\n");
 			if (get(map, token) != NULL)
 				ifdef(in, out, map, 1);
 			else
-				ifdef(in, out, map, 0);		
+				ifdef(in, out, map, 0);
 		} else if (!strcmp(token, "#ifndef")) {
 			if (get(map, token) != NULL)
 				ifdef(in, out, map, 0);
 			else
-				ifdef(in, out, map, 1);	
+				ifdef(in, out, map, 1);
 		} else if (!strcmp(token, "#include")) {
 			token = strtok(line, "\"");
 			token = strtok(NULL, " \"");
@@ -337,7 +338,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			while (token != NULL) {
 				value = get(map, token);
 				if (value != NULL)
-					result = replace(result, token, value);	
+					result = replace(result, token, value);
 				token = strtok(NULL, delimiters);
 			}
 			fputs(result, out);
