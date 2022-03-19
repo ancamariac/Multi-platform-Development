@@ -433,7 +433,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 					    malloc((strlen(argv[i + 1]) + 1) *
 						   sizeof(char));
 
-					if (!output) {
+					if (!(*output)) {
 						exit(12);
 					}
 
@@ -444,7 +444,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 					    malloc((strlen(argv[i] + 2) + 1) *
 						   sizeof(char));
 
-					if (!output) {
+					if (!(*output)) {
 						exit(12);
 					}
 
@@ -456,7 +456,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 				*input = malloc((strlen(argv[i]) + 1) *
 						sizeof(char));
 
-				if (!input) {
+				if (!(*input)) {
 					exit(12);
 				}
 
@@ -465,7 +465,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 				*output = malloc((strlen(argv[i]) + 1) *
 						 sizeof(char));
 
-				if (!output) {
+				if (!(*output)) {
 					exit(12);
 				}
 
@@ -520,12 +520,12 @@ int main(int argc, char **argv)
 			  inputFileName);
 	}
 
-	printf("aaaaaa\n");
+	//printf("aaaaaa\n");
 	fflush(inFile);
 	fclose(inFile);
 	free(inputFileName);
 
-	printf("bbbbbbbbbb\n");
+	//printf("bbbbbbbbbb\n");
 	fflush(outFile);
 	fclose(outFile);
 	free(outputFileName);
