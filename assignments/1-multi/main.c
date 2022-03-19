@@ -12,9 +12,8 @@ int getLine(char **line, FILE *in)
 		*line = NULL;
 	}
 
-	if (fgets(readline, MAXLEN, in) == NULL) {
+	if (fgets(readline, MAXLEN, in) == NULL)
 		return -1;
-	}
 
 	len = strlen(readline);
 	*line = malloc((len + 1) * sizeof(char));
@@ -22,7 +21,6 @@ int getLine(char **line, FILE *in)
 	return len;
 }
 
-// start
 FILE *getIncFile(char *fileName, char **directories, int numDir,
 		 char *currentDir)
 {
@@ -35,10 +33,9 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 	filePath =
 	    malloc((strlen(currentDir) + strlen(fileName) + 1) * sizeof(char));
 
-	if (!filePath) 
+	if (!filePath)
 		exit(12);
 	
-
 	strcpy(filePath, currentDir);
 	strcat(filePath, fileName);
 
@@ -55,10 +52,9 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 		path = malloc((strlen(directories[i]) + strlen(fileName) + 2) *
 			      sizeof(char));
 
-		if (!path) 
+		if (!path)
 			exit(12);
 		
-
 		strcpy(path, directories[i]);
 		strcat(path, "/");
 		strcat(path, fileName);
@@ -74,7 +70,6 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 
 	return NULL;
 }
-// end
 
 char *replace(char *line, char *key, char *value)
 {
@@ -89,9 +84,8 @@ char *replace(char *line, char *key, char *value)
 	for (i = 0; i < len; i++) {
 		if (line[i] == '\"') {
 			i++;
-			while (line[i] != '\"') 
+			while (line[i] != '\"')
 				i++;
-			
 			i++;
 		}
 		if (strncmp(&line[i], key, len1) == 0) {
@@ -103,7 +97,7 @@ char *replace(char *line, char *key, char *value)
 	if (found) {
 		result = malloc((len_res + 1) * sizeof(char));
 
-		if (!result) 
+		if (!result)
 			exit(12);
 
 		strncpy(result, line, i);
@@ -152,9 +146,8 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 				token = strtok(line, delimiters);
 				token = strtok(NULL, "\n");
 				val = get(map, token);
-				if (val != NULL) 
+				if (val != NULL)
 					token = val;
-				
 				if (!strcmp(token, "0")) {
 					ifelse(in, out, map, 0, 0);
 					free(line);
@@ -208,18 +201,17 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond)
 			if (!strncmp(line, "#endif", 6)) {
 				free(line);
 				return;
-			} 
+			}
 
 			if (!strncmp(line, "#define", 7)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				value = strtok(NULL, "\n");
 
-				if (value) 
+				if (value)
 					insert(map, key, value);
-				else 
-					insert(map, key, "");
-				
+				else
+					insert(map, key, "");	
 			} else if (!strncmp(line, "#undef", 6)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
@@ -238,7 +230,7 @@ char *getDirectory(char *path)
 
 	int i = 0;
 
-	if (!strcmp(path, "")) 
+	if (!strcmp(path, ""))
 		return path;
 
 	fileName = strrchr(path, '/');
@@ -250,7 +242,7 @@ char *getDirectory(char *path)
 
 	dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName) + 2));
 
-	if (!dir) 
+	if (!dir)
 		exit(12);
 
 	while (path != fileName) {
@@ -285,12 +277,12 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	while (read != -1) {
 		line_copy = malloc((strlen(line) + 1) * sizeof(char));
 
-		if (!line_copy) 
+		if (!line_copy)
 			exit(12);
 
 		result = malloc((strlen(line) + 1) * sizeof(char));
 
-		if (!result) 
+		if (!result)
 			exit(12);
 
 		strcpy(line_copy, line);
@@ -308,27 +300,23 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			token = strtok(NULL, "\n");
 			val = get(map, token);
 
-			if (val != NULL) 
-				token = val;
-			
-			if (!strcmp(token, "0")) 
+			if (val != NULL)
+				token = val;		
+			if (!strcmp(token, "0"))
 				ifelse(in, out, map, 0, 0);
-			else 
-				ifelse(in, out, map, 1, 0);
-			
+			else
+				ifelse(in, out, map, 1, 0);			
 		} else if (!strcmp(token, "#ifdef")) {
 			token = strtok(NULL, "\n");
-			if (get(map, token) != NULL) 
+			if (get(map, token) != NULL)
 				ifdef(in, out, map, 1);
-			else 
-				ifdef(in, out, map, 0);
-			
+			else
+				ifdef(in, out, map, 0);			
 		} else if (!strcmp(token, "#ifndef")) {
-			if (get(map, token) != NULL) 
+			if (get(map, token) != NULL)
 				ifdef(in, out, map, 0);
-			else 
-				ifdef(in, out, map, 1);
-			
+			else
+				ifdef(in, out, map, 1);			
 		} else if (!strcmp(token, "#include")) {
 			token = strtok(line, "\"");
 			token = strtok(NULL, " \"");
@@ -350,9 +338,8 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		else {
 			while (token != NULL) {
 				value = get(map, token);
-				if (value != NULL) 
-					result = replace(result, token, value);
-				
+				if (value != NULL)
+					result = replace(result, token, value);				
 				token = strtok(NULL, delimiters);
 			}
 			fputs(result, out);
@@ -361,7 +348,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		free(line_copy);
 		free(result);
 		free(line);
-		line = NULL;		
+		line = NULL;	
 		read = getLine(&line, in);
 	}
 	free(line);
@@ -375,16 +362,13 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 	int i = 0;
 
 	for (i = 1; i < argc; i++) {
-		if (!strncmp(argv[i], "-I", 2)) 
-			*numDir += 1;
-		
+		if (!strncmp(argv[i], "-I", 2))
+			*numDir += 1;		
 	}
 	if (*numDir != 0) {
 		directories = malloc((*numDir) * sizeof(char *));
-
-		if (!directories) 
-			exit(12);
-		
+		if (!directories)
+			exit(12);		
 	}
 
 	for (i = 1; i < argc; i++) {
@@ -401,21 +385,18 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 
 				val = strtok(NULL, "");
 
-				if (val == NULL) 
+				if (val == NULL)
 					val = "";
-
 				insert(map, key, val);
 
 			} else if (argv[i][1] == 'I') {
-				// start
 				if (strlen(argv[i]) == 2) {
 					directories[currDir] =
 					    malloc((strlen(argv[i + 1]) + 1) *
 						   sizeof(char));
 
-					if (!directories[currDir]) 
+					if (!directories[currDir])
 						exit(12);
-
 					strcpy(directories[currDir],
 					       argv[i + 1]);
 					i++;
@@ -439,7 +420,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 					    malloc((strlen(argv[i + 1]) + 1) *
 						   sizeof(char));
 
-					if (!(*output)) 
+					if (!(*output))
 						exit(12);
 
 					strcpy(*output, argv[i + 1]);
@@ -449,7 +430,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 					    malloc((strlen(argv[i] + 2) + 1) *
 						   sizeof(char));
 
-					if (!(*output)) 
+					if (!(*output))
 						exit(12);
 
 					strcpy(*output, argv[i] + 2);
@@ -468,7 +449,7 @@ char **getArgs(int argc, char **argv, char **input, char **output, HashMap *map,
 				*output = malloc((strlen(argv[i]) + 1) *
 						 sizeof(char));
 
-				if (!(*output)) 
+				if (!(*output))
 					exit(12);
 
 				strcpy(*output, argv[i]);
