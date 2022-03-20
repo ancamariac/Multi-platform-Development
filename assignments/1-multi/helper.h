@@ -8,6 +8,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct Elem {
+	char *key;
+	char *value;
+} Elem;
+
+typedef struct HashMap {
+	Elem *elem;
+	int cnt;
+	int size;
+} HashMap;
+
 int getLine(char **line, FILE *in);
 
 FILE *getIncFile(char *fileName, char **directories, int numDir,
