@@ -18,7 +18,7 @@ char *replace(char *line, char *key, char *value);
 
 void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done);
 
-void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char **directories, int numDir)
+void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char **directories, int numDir);
 
 char *getDirectory(char *path);
 

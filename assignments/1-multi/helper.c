@@ -19,8 +19,10 @@ int getLine(char **line, FILE *in)
 
 	len = strlen(readline);
 	*line = malloc((len + 1) * sizeof(char));
-    if (!line)
+
+    if (!(*line))
         exit(12);
+
 	strcpy(*line, readline);
 	return len;
 }
@@ -124,6 +126,7 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 
 	char *val = NULL;
 	char *token = NULL;
+	char *key = NULL;
 
 	if (done == 1) {
 		while ((read = getLine(&line, in)) != -1) {
@@ -173,6 +176,15 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 			} else if (!strncmp(line, "#elif", 5)) {
 				ifelse(in, out, map, 1, 1);
 				free(line);
+			} else if (!strncmp(line, "#define", 7)) {
+				key = strtok(line, delimiters);
+				key = strtok(NULL, delimiters);
+				val = strtok(NULL, "\n");
+
+				if (val)
+					insert(map, key, val);
+				else
+					insert(map, key, "");
 			} else {
 				fputs(line, out);
 			}
@@ -190,18 +202,19 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 	char *key = NULL;
 	char *token = NULL;
 	char *inputDir = NULL;
-	char *incFile = NULL;
+	FILE *incFile;
 
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
 
 	if (cond == 0) {
 		while ((read = getLine(&line, in)) != -1) {
+			
             if (!strncmp(line, "#else", 5)) {
 				free(line);
                 ifdef(in, out, map, 1, inFileName, directories, numDir);
 				return;
 			}
-
+		
 			if (!strncmp(line, "#endif", 6)) {
 				free(line);
 				return;
@@ -209,6 +222,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 		}
 	} else {
 		while ((read = getLine(&line, in)) != -1) {
+
             if (!strncmp(line, "#else", 5)) {
 				free(line);
                 ifdef(in, out, map, 0, inFileName, directories, numDir);
@@ -218,6 +232,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 				free(line);
 				return;
 			}
+
 
 			if (!strncmp(line, "#define", 7)) {
 				key = strtok(line, delimiters);
@@ -231,7 +246,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 			} else if (!strncmp(line, "#undef", 6)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
-				delete(map, key);
+				deleteKey(map, key);
             } else if (!strncmp(line, "#ifdef", 6)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
@@ -263,6 +278,18 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 
 				free(inputDir);
 
+			}else if (!strncmp(line, "#if", 3)) {
+				token = strtok(line, delimiters);
+				token = strtok(NULL, "\n");
+				value = get(map, token);
+
+				if (value != NULL)
+					token = value;
+				
+				if (!strcmp(token, "0"))
+					ifelse(in, out, map, 0, 0);
+				else 
+					ifelse(in, out, map, 1, 0);
 			} else {
 				fputs(line, out);
 			}
@@ -423,7 +450,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			}
 		} else if (!strcmp(token, "#undef")) {
 			key = strtok(NULL, "\n");
-			delete(map, key);
+			deleteKey(map, key);
 		} else if (!strcmp(token, "#if")) {
 			token = strtok(NULL, "\n");
 			val = get(map, token);
@@ -441,11 +468,11 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			else
 				ifdef(in, out, map, 0, inFileName, directories, numDir);
 		} else if (!strcmp(token, "#ifndef")) {
+			token = strtok(NULL, "\n");
 			if (get(map, token) != NULL)
 				ifdef(in, out, map, 0, inFileName, directories, numDir);
 			else
-				ifdef(in, out, map, 1, inFileName, directories, numDir);
-            token = strtok(NULL, "\n");
+				ifdef(in, out, map, 1, inFileName, directories, numDir);    
 		} else if (!strcmp(token, "#include")) {
 			token = strtok(line, "\"");
 			token = strtok(NULL, " \"");
