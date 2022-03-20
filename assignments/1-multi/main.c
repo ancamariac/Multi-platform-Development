@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #include <fcntl.h>
 #include "helper.h"
 #define MAXLEN 256
