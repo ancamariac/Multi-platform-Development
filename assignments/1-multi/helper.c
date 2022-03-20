@@ -291,7 +291,9 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 				else 
 					ifelse(in, out, map, 1, 0);
 			} else {
-				fputs(line, out);
+                if (line[0] != '\n') {
+                    fputs(line, out);
+                }				
 			}
 		}
 	}
@@ -394,11 +396,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		if (!strcmp(token, "#define")) {
 			key = strtok(NULL, delimiters);
 			value = strtok(NULL, "\n");
-			// daca se gasesc spatii in value,
-			// inseamna ca mai sunt keys
-			// care trebuiesc inlocuite
 			if (strchr(value, ' ')) {
-				// multi lines define
 				if (value[strlen(value) - 1] == '\\') {
 					parsed_value = malloc((strlen(value) + 1) *
 					sizeof(char));
