@@ -273,6 +273,12 @@ char *concatenate(char *dest, const char *src)
 	return dest;
 }
 
+void check_token(char *token, char **res)
+{
+	if (token != NULL)
+		res = concatenate(res, token);
+}
+
 void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	       int numDir, char *inFileName)
 {
@@ -320,18 +326,18 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			if (strchr(value, ' ')) {
 				// multi lines define
 				if (value[strlen(value) - 1] == '\\') {
-					parsed_value = malloc((strlen(value) + 1) * 
+					parsed_value = malloc((strlen(value) + 1) *
 					sizeof(char));
 
 					if (!parsed_value)
 						exit(12);
 
 					strcpy(parsed_value, value);
-					while (1) {
+					do {
 						read = getLine(&line, in);
 						parsed_value = concatenate(parsed_value, line);
-						if (line[strlen(line) - 2] != '\\') break;
-					}
+					} while (line[strlen(line) - 2] == '\\');
+
 					token = strtok(parsed_value, multi_lines_delim);
 					result_m = malloc((strlen(token) + 1) * sizeof(char));
 					if (!result_m)
@@ -341,8 +347,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 					while (token != NULL) {
 						token = strtok(NULL, multi_lines_delim);
-						if (token != NULL) 
-							result_m = concatenate(result_m, token);
+						check_token(token, &result_m);
 					}
 					insert(map, key, result_m);
 					free(result_m);
