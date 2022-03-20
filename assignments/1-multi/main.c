@@ -276,7 +276,7 @@ char *concatenate(char *dest, const char *src)
 void check_token(char *token, char **res)
 {
 	if (token != NULL)
-		res = concatenate(res, token);
+		*res = concatenate(*res, token);
 }
 
 void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
