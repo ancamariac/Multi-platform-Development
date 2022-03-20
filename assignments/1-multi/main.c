@@ -1,8 +1,6 @@
 #include <fcntl.h>
 #include "helper.h"
-
 #define MAXLEN 256
-#define BACKSLASH "\"
 
 int getLine(char **line, FILE *in)
 {
@@ -257,6 +255,25 @@ char *getDirectory(char *path)
 	return dir;
 }
 
+char * concatenate(char *dest, const char *src)
+{
+	const size_t a = strlen(dest);
+	const size_t b = strlen(src);
+	const size_t size_ab = a + b + 2;
+
+	dest = realloc(dest, size_ab);
+
+	if (!dest)
+		exit(12);
+
+	dest[a] = ' ';
+
+	memcpy(dest + a + 1, src, b + 1);
+
+    return dest;
+}
+
+
 void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	       int numDir, char *inFileName)
 {
@@ -264,6 +281,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 	char *line = NULL;
 	char *result = NULL;
+	char *result_m = NULL;
 	char *line_copy = NULL;
 	char *inputDir = NULL;
 	char *val = NULL;
@@ -272,6 +290,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	char * multi_line_value = NULL;
 	char *token = NULL, *key = NULL, *value = NULL, *another_value = NULL, *parsed_value = NULL;
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
+	static const char multi_lines_delim[] = "\\t\n \\";
 
 	read = getLine(&line, in);
 	while (read != -1) {
@@ -298,10 +317,44 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			if (strchr(value, ' ')) { 
 				// multi lines define
 				// se verifica daca ultimul caracter este backslash
-				if (!strcmp((value + strlen(value) - 1), "\"")) {
-					// se citeste pana sirul pana dam de backslash
-					multi_line_value = strtok(NULL, "\"");
-					printf("%s\n", multi_line_value);
+				if (value[strlen(value) - 1] == '\\') {
+					
+					parsed_value = malloc((strlen(value) + 1) * sizeof(char));
+
+					if (!parsed_value)
+						exit(12);
+
+					strcpy(parsed_value, value);
+	
+					while (1) {
+						read = getLine(&line, in);
+
+						parsed_value = concatenate(parsed_value, line);
+
+						if (line[strlen(line) - 2] != '\\') {
+							break;
+						}
+					}
+					token = strtok(parsed_value, multi_lines_delim);
+					result_m = malloc((strlen(token) + 1) * sizeof(char));
+					
+
+					if (!result_m)
+						exit(12);
+
+					strcpy(result_m, token);
+
+					while (token != NULL) {
+						token = strtok(NULL, multi_lines_delim);
+						if (token != NULL) {
+							result_m = concatenate(result_m, token);
+						}
+					}
+					
+					//printf("%s\n", result_m);
+					insert(map, key, result_m);
+					free(result_m);
+
 				}
 				parsed_value = malloc((strlen(value) + 1) * sizeof(char));
 
