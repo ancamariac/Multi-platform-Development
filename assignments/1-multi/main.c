@@ -2,6 +2,10 @@
 
 #include "helper.h"
 
+HashMap createHashMap(int size);
+
+void deleteMap(HashMap *map);
+
 int main(int argc, char **argv)
 {
 	char *inputFileName = NULL;
