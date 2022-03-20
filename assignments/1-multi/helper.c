@@ -21,9 +21,8 @@ int getLine(char **line, FILE *in)
 	len = strlen(readline);
 	*line = malloc((len + 1) * sizeof(char));
 
-    if(!line)
+    if (!line)
         exit(12);
-
 	strcpy(*line, readline);
 	return len;
 }
