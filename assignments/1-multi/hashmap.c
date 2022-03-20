@@ -105,7 +105,7 @@ char *get(HashMap *map, char *key)
 	}
 }
 
-void delete(HashMap *map, char *key)
+void deleteKey(HashMap *map, char *key)
 {
 	int index = 0;
 
