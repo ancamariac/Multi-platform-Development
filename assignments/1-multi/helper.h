@@ -7,17 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-typedef struct Elem {
-	char *key;
-	char *value;
-} Elem;
-
-typedef struct HashMap {
-	Elem *elem;
-	int cnt;
-	int size;
-} HashMap;
+#include "hashmap.h"
 
 int getLine(char **line, FILE *in);
 
