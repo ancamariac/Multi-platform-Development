@@ -257,7 +257,7 @@ char *getDirectory(char *path)
 	return dir;
 }
 
-char * concatenate(char *dest, const char *src)
+char *concatenate(char *dest, const char *src)
 {
 	const size_t a = strlen(dest);
 	const size_t b = strlen(src);
@@ -269,12 +269,9 @@ char * concatenate(char *dest, const char *src)
 		exit(12);
 
 	dest[a] = ' ';
-
 	memcpy(dest + a + 1, src, b + 1);
-
-    return dest;
+	return dest;
 }
-
 
 void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	       int numDir, char *inFileName)
@@ -289,10 +286,8 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	char *line_copy = NULL;
 	char *inputDir = NULL;
 	char *val = NULL;
-	char *multi_line_value = NULL;
 	char *token = NULL;
 	char *key = NULL;
-	char *value = NULL;
 	char *value = NULL;
 	char *another_value = NULL;
 	char *parsed_value = NULL;
@@ -319,13 +314,14 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		if (!strcmp(token, "#define")) {
 			key = strtok(NULL, delimiters);
 			value = strtok(NULL, "\n");
-			// daca se gasesc spatii in value, inseamna ca mai sunt keys
+			// daca se gasesc spatii in value, 
+			// inseamna ca mai sunt keys
 			// care trebuiesc inlocuite
 			if (strchr(value, ' ')) {
 				// multi lines define
-				// se verifica daca ultimul caracter este backslash
 				if (value[strlen(value) - 1] == '\\') {
-					parsed_value = malloc((strlen(value) + 1) * sizeof(char));
+					parsed_value = malloc((strlen(value) + 1) * 
+					sizeof(char));
 
 					if (!parsed_value)
 						exit(12);
@@ -333,11 +329,8 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 					strcpy(parsed_value, value);
 					while (1) {
 						read = getLine(&line, in);
-
 						parsed_value = concatenate(parsed_value, line);
-
-						if (line[strlen(line) - 2] != '\\')
-							break;
+						if (line[strlen(line) - 2] != '\\') break;
 					}
 					token = strtok(parsed_value, multi_lines_delim);
 					result_m = malloc((strlen(token) + 1) * sizeof(char));

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "helper.h"
-#include <string.h>
 
 #define MAX_SIZE 20
 
@@ -50,11 +49,6 @@ void deleteMap(HashMap *map)
 
 void insert(HashMap *map, char *key, char *value)
 {
-	// aici verific daca e prea plin map (mai mult de 75%)
-	// trebuie sa fac map nou pentru ca hashul se calculeaza in functie de
-	// size se modifica size => hashul va returna alt index decat cel
-	// calculat anterior pentru elementele deja existente index gresit => nu
-	// gaseste elementul
 	int i = 0;
 	int index = 0;
 
