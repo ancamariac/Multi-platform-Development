@@ -279,6 +279,8 @@ char * concatenate(char *dest, const char *src)
 void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	       int numDir, char *inFileName)
 {
+	FILE *incFile = NULL;
+
 	int read = 0;
 
 	char *line = NULL;
@@ -287,10 +289,14 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	char *line_copy = NULL;
 	char *inputDir = NULL;
 	char *val = NULL;
+	char *multi_line_value = NULL;
+	char *token = NULL;
+	char *key = NULL;
+	char *value = NULL;
+	char *value = NULL;
+	char *another_value = NULL;
+	char *parsed_value = NULL;
 
-	FILE *incFile = NULL;
-	char * multi_line_value = NULL;
-	char *token = NULL, *key = NULL, *value = NULL, *another_value = NULL, *parsed_value = NULL;
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 	static const char multi_lines_delim[] = "\\t\n \\";
 
@@ -313,33 +319,28 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		if (!strcmp(token, "#define")) {
 			key = strtok(NULL, delimiters);
 			value = strtok(NULL, "\n");
-			
 			// daca se gasesc spatii in value, inseamna ca mai sunt keys
 			// care trebuiesc inlocuite
-			if (strchr(value, ' ')) { 
+			if (strchr(value, ' ')) {
 				// multi lines define
 				// se verifica daca ultimul caracter este backslash
 				if (value[strlen(value) - 1] == '\\') {
-					
 					parsed_value = malloc((strlen(value) + 1) * sizeof(char));
 
 					if (!parsed_value)
 						exit(12);
 
 					strcpy(parsed_value, value);
-	
 					while (1) {
 						read = getLine(&line, in);
 
 						parsed_value = concatenate(parsed_value, line);
 
-						if (line[strlen(line) - 2] != '\\') {
+						if (line[strlen(line) - 2] != '\\')
 							break;
-						}
 					}
 					token = strtok(parsed_value, multi_lines_delim);
 					result_m = malloc((strlen(token) + 1) * sizeof(char));
-				
 					if (!result_m)
 						exit(12);
 
@@ -347,11 +348,9 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 					while (token != NULL) {
 						token = strtok(NULL, multi_lines_delim);
-						if (token != NULL) {
+						if (token != NULL) 
 							result_m = concatenate(result_m, token);
-						}
 					}
-					
 					insert(map, key, result_m);
 					free(result_m);
 					free(parsed_value);
@@ -360,17 +359,14 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 				if (!parsed_value)
 					exit(12);
-				
 				strcpy(parsed_value, value);
 
 				token = strtok(value, delimiters);
 
 				while (token != NULL) {
 					another_value = get(map, token);
-					
-					if (another_value != NULL) {
+					if (another_value != NULL)
 						parsed_value = replace(parsed_value, token, another_value);
-					}
 					token = strtok(NULL, delimiters);
 				}
 				insert(map, key, parsed_value);
@@ -418,8 +414,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			}
 
 			free(inputDir);
-		}
-		else {
+		} else {
 			while (token != NULL) {
 				value = get(map, token);
 				if (value != NULL)
