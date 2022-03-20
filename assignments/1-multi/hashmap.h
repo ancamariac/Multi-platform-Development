@@ -28,4 +28,4 @@ void insert(HashMap *map, char *key, char *value);
 
 char *get(HashMap *map, char *key);
 
-void delete(HashMap *map, char *key);
+void deleteKey(HashMap *map, char *key);
