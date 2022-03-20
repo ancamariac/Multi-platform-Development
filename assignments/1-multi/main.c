@@ -2,6 +2,7 @@
 #include "helper.h"
 
 #define MAXLEN 256
+#define BACKSLASH "\"
 
 int getLine(char **line, FILE *in)
 {
@@ -268,7 +269,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	char *val = NULL;
 
 	FILE *incFile = NULL;
-
+	char * multi_line_value = NULL;
 	char *token = NULL, *key = NULL, *value = NULL, *another_value = NULL, *parsed_value = NULL;
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 
@@ -295,7 +296,13 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			// daca se gasesc spatii in value, inseamna ca mai sunt keys
 			// care trebuiesc inlocuite
 			if (strchr(value, ' ')) { 
-
+				// multi lines define
+				// se verifica daca ultimul caracter este backslash
+				if (!strcmp((value + strlen(value) - 1), "\"")) {
+					// se citeste pana sirul pana dam de backslash
+					multi_line_value = strtok(NULL, "\"");
+					printf("%s\n", multi_line_value);
+				}
 				parsed_value = malloc((strlen(value) + 1) * sizeof(char));
 
 				if (!parsed_value)
