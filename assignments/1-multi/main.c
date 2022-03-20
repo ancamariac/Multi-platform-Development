@@ -337,8 +337,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 					}
 					token = strtok(parsed_value, multi_lines_delim);
 					result_m = malloc((strlen(token) + 1) * sizeof(char));
-					
-
+				
 					if (!result_m)
 						exit(12);
 
@@ -351,10 +350,9 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 						}
 					}
 					
-					//printf("%s\n", result_m);
 					insert(map, key, result_m);
 					free(result_m);
-
+					free(parsed_value);
 				}
 				parsed_value = malloc((strlen(value) + 1) * sizeof(char));
 
