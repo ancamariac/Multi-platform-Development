@@ -289,10 +289,8 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	char *line_copy = NULL;
 	char *inputDir = NULL;
 	char *val = NULL;
-	char *multi_line_value = NULL;
 	char *token = NULL;
 	char *key = NULL;
-	char *value = NULL;
 	char *value = NULL;
 	char *another_value = NULL;
 	char *parsed_value = NULL;
