@@ -9,10 +9,10 @@ so-cpp: main.o helper.o hashmap.o
 main.o: main.c
 		$(CC) $(CFLAGS) -c $^
 
-hashmap.o: hashmap.c hashmap.h
+helper.o: helper.c helper.h
 		$(CC) $(CFLAGS) -c $^
 
-helper.o: helper.c helper.h
+hashmap.o: hashmap.c hashmap.h
 		$(CC) $(CFLAGS) -c $^
 
 .PHONY: clean
