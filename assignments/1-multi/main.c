@@ -269,7 +269,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 	FILE *incFile = NULL;
 
-	char *token = NULL, *key = NULL, *value = NULL, *another_value = NULL;
+	char *token = NULL, *key = NULL, *value = NULL, *another_value = NULL, *parsed_value = NULL;
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
 
 	read = getLine(&line, in);
@@ -290,19 +290,34 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 		if (!strcmp(token, "#define")) {
 			key = strtok(NULL, delimiters);
-			value = strtok(NULL, "/n");
+			value = strtok(NULL, "\n");
+			
+			// daca se gasesc spatii in value, inseamna ca mai sunt keys
+			// care trebuiesc inlocuite
+			if (strchr(value, ' ')) { 
 
-			if (strchr(value, " ")) {
-				while (value != NULL) {
-					another_value = get(map, value);
-					if (another_value != NULL)
-						result = replace(result, value, another_value);
-					value = strtok(NULL, delimiters);
+				parsed_value = malloc((strlen(value) + 1) * sizeof(char));
+
+				if (!parsed_value)
+					exit(12);
+				
+				strcpy(parsed_value, value);
+
+				token = strtok(value, delimiters);
+
+				while (token != NULL) {
+					another_value = get(map, token);
+					
+					if (another_value != NULL) {
+						parsed_value = replace(parsed_value, token, another_value);
+					}
+					token = strtok(NULL, delimiters);
 				}
-				fputs(result, out);
+				insert(map, key, parsed_value);
+				free(parsed_value);
+			} else {
+				insert(map, key, value);
 			}
-
-			insert(map, key, value);
 		} else if (!strcmp(token, "#undef")) {
 			key = strtok(NULL, "\n");
 			delete(map, key);
