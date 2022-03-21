@@ -3,7 +3,6 @@
 #include "helper.h"
 
 #define MAXLEN 256
-#define IFDEF "#ifdef"
 
 void defineMap(HashMap *map, char **line, FILE *in)
 {
@@ -286,10 +285,10 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
 
 	if (cond == 0) {
-		while ((read = getLine(&line, in)) != -1) {
-            if (!strncmp(line, "#else", 5)) {
+			while ((read = getLine(&line, in)) != -1) {
+				if (!strncmp(line, "#else", 5)) {
 				free(line);
-                ifdef(in, out, map, 1, inFileName, directories, numDir);
+				ifdef(in, out, map, 1, inFileName, directories, numDir);
 				return;
 			}
 			if (!strncmp(line, "#endif", 6)) {
@@ -299,10 +298,9 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 		}
 	} else {
 		while ((read = getLine(&line, in)) != -1) {
-
-            if (!strncmp(line, "#else", 5)) {
+			if (!strncmp(line, "#else", 5)) {
 				free(line);
-                ifdef(in, out, map, 0, inFileName, directories, numDir);
+				ifdef(in, out, map, 0, inFileName, directories, numDir);
 				return;
 			}
 			if (!strncmp(line, "#endif", 6)) {
@@ -316,14 +314,14 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				deleteKey(map, key);
-            } else if (!strncmp(line, IFDEF, 6)) {
+			} else if (!strncmp(line, "#ifdef", 6)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				if (get(map, key) != NULL)
 					ifdef(in, out, map, 1, inFileName, directories, numDir);
 				else
 					ifdef(in, out, map, 0, inFileName, directories, numDir);
-			}  else if (!strncmp(line, "#ifndef", 7)) {
+			} else if (!strncmp(line, "#ifndef", 7)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				if (get(map, key) != NULL)
@@ -470,7 +468,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 				ifelse(in, out, map, 0, 0);
 			else
 				ifelse(in, out, map, 1, 0);
-		} else if (!strcmp(token, IFDEF)) {
+		} else if (!strcmp(token, "#ifdef")) {
 			token = strtok(NULL, "\n");
 			if (get(map, token) != NULL)
 				ifdef(in, out, map, 1, inFileName, directories, numDir);
