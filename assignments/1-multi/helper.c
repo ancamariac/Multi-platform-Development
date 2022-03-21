@@ -15,6 +15,7 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 	char *parsed_value = NULL;
 	char *token = NULL;
 	char *result_m = NULL;
+	char *line_mdf = NULL;
 
 	token = strtok(*line, delimiters);
 	key = strtok(NULL, delimiters);
@@ -30,63 +31,67 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 		free(value);
 		return;
 	}
-	if (strchr(value, ' ')) {
 		// multi lines define
-		if (value[strlen(value) - 1] == '\\') {
-			
-			parsed_value = malloc((strlen(value) + 1) *
-			sizeof(char));
+	if (value[strlen(value) - 1] == '\\') {
+		
+		parsed_value = malloc((strlen(value) + 1) *
+		sizeof(char));
 
-			if (!parsed_value)
-				exit(12);
-
-			strcpy(parsed_value, value);
-			do {
-				getLine(line, in);
-				parsed_value =
-				concatenate(parsed_value, *line);
-			} while (*line[strlen(*line) - 2] == '\\');
-
-			token = strtok(parsed_value, multi_lines_delim);
-			result_m = malloc((strlen(token) + 1) * sizeof(char));
-			if (!result_m)
-				exit(12);
-
-			strcpy(result_m, token);
-
-			while (token != NULL) {
-				token = strtok(NULL, multi_lines_delim);
-				check_token(token, &result_m);
-			}
-			insert(map, key, result_m);
-			free(result_m);
-			free(parsed_value);
-		}
-		parsed_value = malloc((strlen(value) + 1) * sizeof(char));
+		char* key_cpy = malloc((strlen(key) + 1) * sizeof(char));
+		strcpy(key_cpy, key);
 
 		if (!parsed_value)
 			exit(12);
+
 		strcpy(parsed_value, value);
-		token = strtok(value, delimiters);
+		do {
+			getLine(&line_mdf, in);
+			parsed_value =
+			concatenate(parsed_value, line_mdf);
+		} while (line_mdf[strlen(line_mdf) - 2] == '\\');
+
 		
+		token = strtok(parsed_value, multi_lines_delim);
+		result_m = malloc((strlen(token) + 1) * sizeof(char));
+		if (!result_m)
+			exit(12);
+
+		strcpy(result_m, token);
 
 		while (token != NULL) {
-			another_value = get(map, token);
-			if (another_value != NULL) {
-				while (get(map, another_value)) {
-					another_value = get(map, another_value);
-				}
-				parsed_value =
-				replace(parsed_value, token, another_value);
-			}
-				
-			token = strtok(NULL, delimiters);
+			token = strtok(NULL, multi_lines_delim);
+			check_token(token, &result_m);
 		}
-		insert(map, key, parsed_value);
+		
+		insert(map, key_cpy, result_m);
+		free(result_m);
 		free(parsed_value);
-	} else {
-		insert(map, key, value);
+		free(key_cpy);
+		free(line_mdf);
+		return;
 	}
+	parsed_value = malloc((strlen(value) + 1) * sizeof(char));
+
+	if (!parsed_value)
+		exit(12);
+	strcpy(parsed_value, value);
+	token = strtok(value, delimiters);
+	
+	while (token != NULL) {
+		another_value = get(map, token);
+		if (another_value != NULL) {
+			while (get(map, another_value)) {
+				another_value = get(map, another_value);
+			}
+			parsed_value =
+			replace(parsed_value, token, another_value);
+		}
+			
+		token = strtok(NULL, delimiters);
+	}
+	insert(map, key, parsed_value);
+	free(parsed_value);
+	
 }
 
 
