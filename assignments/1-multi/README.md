@@ -7,7 +7,8 @@ Organizare
 
 Dezvoltarea funcționalității specifice unui preprocesor s-a realizat cu ajutorul unei structuri de date de tip hashmap (*hashmap.c & hashmap.h*). Această structură dezvoltă la rândul ei o structură de tip Elem pentru păstrarea tuplului cheie-valoare. Funcțiile implementate în cadrul acestei structuri sunt: de creare a hashmapului, stergere a acestuia, inserarea unui element în map, returnarea unui element în funcție de cheie și stergerea unui element din map. Astfel, în urma preprocesării, se vor insera (și eventual, ulterior sterge) asocieri corespunzătoare fiecărei directive în parte.
 
-- funcția **getArgs** are rolul de a interpreta fiecare argument regăsit în semnătura executabilului
+- Funcția **getArgs** are rolul de a interpreta fiecare argument regăsit în semnătura executabilului.
+- Funcția **parseFile** analizează fiecare fișier de input în parte, citindu-se din fișier linie cu linie (cu ajutorul funcției **getLine()**)
 
 ***Obligatoriu:*** 
 * De făcut referință la abordarea generală menționată în paragraful de mai sus. Aici se pot băga bucăți de cod/funcții - etc.

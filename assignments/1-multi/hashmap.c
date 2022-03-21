@@ -40,6 +40,7 @@ void deleteMap(HashMap *map)
 
 	for (i = 0; i < map->size; i++) {
 		if (map->elem[i].key) {
+			printf("%s -- %s\n", map->elem[i].key, map->elem[i].value);
 			free(map->elem[i].key);
 			free(map->elem[i].value);
 		}
@@ -51,7 +52,6 @@ void insert(HashMap *map, char *key, char *value)
 {
 	int i = 0;
 	int index = 0;
-
 	if (map->cnt * 4 > map->size * 3) {
 		HashMap newMap = createHashMap(2 * map->size);
 
@@ -83,6 +83,17 @@ void insert(HashMap *map, char *key, char *value)
 			strcpy(map->elem[index].value, value);
 			map->cnt++;
 			return;
+		} else if (strcmp(map->elem[index].key, key) == 0) {
+			
+			free(map->elem[index].value);
+			map->elem[index].value = malloc(strlen(value) + 1);
+
+			if (!map->elem[index].value)
+				exit(12);
+			
+			strcpy(map->elem[index].value, value);
+			return;
+
 		}
 		index += 1;
 		index %= map->size;

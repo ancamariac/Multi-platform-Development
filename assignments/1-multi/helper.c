@@ -4,6 +4,92 @@
 
 #define MAXLEN 256
 
+void defineMap(HashMap *map, char** line, FILE *in) {
+	
+	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
+	static const char multi_lines_delim[] = "\\t\n \\";
+
+	char *key = NULL;
+	char *value = NULL;
+	char *another_value = NULL;
+	char *parsed_value = NULL;
+	char *token = NULL;
+	char *result_m = NULL;
+
+	token = strtok(*line, delimiters);
+	key = strtok(NULL, delimiters);
+	value = strtok(NULL, "\n");
+
+	if (!value) {
+		value = malloc(sizeof(char));
+		if (!value)
+			exit(12);
+
+		value[0] = '\0';
+		insert(map, key, value);
+		return;
+	}
+	if (strchr(value, ' ')) {
+		// multi lines define
+		if (value[strlen(value) - 1] == '\\') {
+			
+			parsed_value = malloc((strlen(value) + 1) *
+			sizeof(char));
+
+			if (!parsed_value)
+				exit(12);
+
+			strcpy(parsed_value, value);
+			do {
+				getLine(line, in);
+				parsed_value =
+				concatenate(parsed_value, *line);
+			} while (*line[strlen(*line) - 2] == '\\');
+
+			token = strtok(parsed_value, multi_lines_delim);
+			result_m = malloc((strlen(token) + 1) * sizeof(char));
+			if (!result_m)
+				exit(12);
+
+			strcpy(result_m, token);
+
+			while (token != NULL) {
+				token = strtok(NULL, multi_lines_delim);
+				check_token(token, &result_m);
+			}
+			insert(map, key, result_m);
+			free(result_m);
+			free(parsed_value);
+		}
+		parsed_value = malloc((strlen(value) + 1) * sizeof(char));
+
+		if (!parsed_value)
+			exit(12);
+		strcpy(parsed_value, value);
+		token = strtok(value, delimiters);
+		
+
+		while (token != NULL) {
+			printf("**%s\n", token);
+			another_value = get(map, token);
+			if (another_value != NULL) {
+				while (get(map, another_value)) {
+					another_value = get(map, another_value);
+				}
+				parsed_value =
+				replace(parsed_value, token, another_value);
+			}
+				
+			token = strtok(NULL, delimiters);
+		}
+		insert(map, key, parsed_value);
+		free(parsed_value);
+	} else {
+		insert(map, key, value);
+	}
+}
+
+
 int getLine(char **line, FILE *in)
 {
 	char readline[MAXLEN];
@@ -20,8 +106,8 @@ int getLine(char **line, FILE *in)
 	len = strlen(readline);
 	*line = malloc((len + 1) * sizeof(char));
 
-    if (!(*line))
-        exit(12);
+	if (!(*line))
+		exit(12);
 
 	strcpy(*line, readline);
 	return len;
@@ -126,7 +212,6 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 
 	char *val = NULL;
 	char *token = NULL;
-	char *key = NULL;
 
 	if (done == 1) {
 		while ((read = getLine(&line, in)) != -1) {
@@ -177,16 +262,12 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 				ifelse(in, out, map, 1, 1);
 				free(line);
 			} else if (!strncmp(line, "#define", 7)) {
-				key = strtok(line, delimiters);
-				key = strtok(NULL, delimiters);
-				val = strtok(NULL, "\n");
-
-				if (val)
-					insert(map, key, val);
-				else
-					insert(map, key, "");
+				defineMap(map, &line, in);
+				free(line);
 			} else {
-				fputs(line, out);
+				if (line[0] != '\n') {
+					fputs(line, out);
+				}
 			}
 		}
 	}
@@ -233,16 +314,8 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 				return;
 			}
 
-
 			if (!strncmp(line, "#define", 7)) {
-				key = strtok(line, delimiters);
-				key = strtok(NULL, delimiters);
-				value = strtok(NULL, "\n");
-
-				if (value)
-					insert(map, key, value);
-				else
-					insert(map, key, "");
+				defineMap(map, &line, in);
 			} else if (!strncmp(line, "#undef", 6)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
@@ -291,9 +364,8 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 				else 
 					ifelse(in, out, map, 1, 0);
 			} else {
-                if (line[0] != '\n') {
-                    fputs(line, out);
-                }				
+				if (line[0] != '\n')
+					fputs(line, out);
 			}
 		}
 	}
@@ -364,18 +436,14 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 
 	char *line = NULL;
 	char *result = NULL;
-	char *result_m = NULL;
 	char *line_copy = NULL;
 	char *inputDir = NULL;
 	char *val = NULL;
 	char *token = NULL;
 	char *key = NULL;
 	char *value = NULL;
-	char *another_value = NULL;
-	char *parsed_value = NULL;
 
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\";
-	static const char multi_lines_delim[] = "\\t\n \\";
 
 	read = getLine(&line, in);
 	while (read != -1) {
@@ -394,58 +462,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		token = strtok(line_copy, delimiters);
 
 		if (!strcmp(token, "#define")) {
-			key = strtok(NULL, delimiters);
-			value = strtok(NULL, "\n");
-			if (strchr(value, ' ')) {
-				if (value[strlen(value) - 1] == '\\') {
-					parsed_value = malloc((strlen(value) + 1) *
-					sizeof(char));
-
-					if (!parsed_value)
-						exit(12);
-
-					strcpy(parsed_value, value);
-					do {
-						read = getLine(&line, in);
-						parsed_value =
-						concatenate(parsed_value, line);
-					} while (line[strlen(line) - 2] == '\\');
-
-					token = strtok(parsed_value, multi_lines_delim);
-					result_m = malloc((strlen(token) + 1) * sizeof(char));
-					if (!result_m)
-						exit(12);
-
-					strcpy(result_m, token);
-
-					while (token != NULL) {
-						token = strtok(NULL, multi_lines_delim);
-						check_token(token, &result_m);
-					}
-					insert(map, key, result_m);
-					free(result_m);
-					free(parsed_value);
-				}
-				parsed_value = malloc((strlen(value) + 1) * sizeof(char));
-
-				if (!parsed_value)
-					exit(12);
-				strcpy(parsed_value, value);
-
-				token = strtok(value, delimiters);
-
-				while (token != NULL) {
-					another_value = get(map, token);
-					if (another_value != NULL)
-						parsed_value =
-						replace(parsed_value, token, another_value);
-					token = strtok(NULL, delimiters);
-				}
-				insert(map, key, parsed_value);
-				free(parsed_value);
-			} else {
-				insert(map, key, value);
-			}
+			defineMap(map, &line, in);
 		} else if (!strcmp(token, "#undef")) {
 			key = strtok(NULL, "\n");
 			deleteKey(map, key);
