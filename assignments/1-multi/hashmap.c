@@ -51,6 +51,7 @@ void insert(HashMap *map, char *key, char *value)
 {
 	int i = 0;
 	int index = 0;
+
 	if (map->cnt * 4 > map->size * 3) {
 		HashMap newMap = createHashMap(2 * map->size);
 
