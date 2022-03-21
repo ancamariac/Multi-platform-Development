@@ -2,9 +2,7 @@
 
 #include "helper.h"
 
-HashMap createHashMap(int size);
-
-void deleteMap(HashMap *map);
+//HashMap createHashMap(int size);
 
 int main(int argc, char **argv)
 {
