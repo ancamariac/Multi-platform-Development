@@ -27,6 +27,7 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 
 		value[0] = '\0';
 		insert(map, key, value);
+		free(value);
 		return;
 	}
 	if (strchr(value, ' ')) {
@@ -70,7 +71,6 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 		
 
 		while (token != NULL) {
-			printf("**%s\n", token);
 			another_value = get(map, token);
 			if (another_value != NULL) {
 				while (get(map, another_value)) {
@@ -220,6 +220,7 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 				return;
 			}
 		}
+		free(line);
 		return;
 	}
 
@@ -261,9 +262,9 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 			} else if (!strncmp(line, "#elif", 5)) {
 				ifelse(in, out, map, 1, 1);
 				free(line);
+				return;
 			} else if (!strncmp(line, "#define", 7)) {
 				defineMap(map, &line, in);
-				free(line);
 			} else {
 				if (line[0] != '\n') {
 					fputs(line, out);
@@ -351,7 +352,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 
 				free(inputDir);
 
-			}else if (!strncmp(line, "#if", 3)) {
+			} else if (!strncmp(line, "#if", 3)) {
 				token = strtok(line, delimiters);
 				token = strtok(NULL, "\n");
 				value = get(map, token);
