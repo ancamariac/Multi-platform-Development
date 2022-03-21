@@ -286,9 +286,9 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
 
 	if (cond == 0) {
-			while ((read = getLine(&line, in)) != -1) {
-				if (!strncmp(line, "#else", 5)) {
-					free(line);
+		while ((read = getLine(&line, in)) != -1) {
+			if (!strncmp(line, "#else", 5)) {
+				free(line);
 				ifdef(in, out, map, 1, inFileName, directories, numDir);
 				return;
 			}
