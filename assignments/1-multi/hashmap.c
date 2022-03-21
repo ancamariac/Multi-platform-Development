@@ -40,7 +40,6 @@ void deleteMap(HashMap *map)
 
 	for (i = 0; i < map->size; i++) {
 		if (map->elem[i].key) {
-			printf("%s -- %s\n", map->elem[i].key, map->elem[i].value);
 			free(map->elem[i].key);
 			free(map->elem[i].value);
 		}
