@@ -84,16 +84,13 @@ void insert(HashMap *map, char *key, char *value)
 			map->cnt++;
 			return;
 		} else if (strcmp(map->elem[index].key, key) == 0) {
-			
 			free(map->elem[index].value);
 			map->elem[index].value = malloc(strlen(value) + 1);
 
 			if (!map->elem[index].value)
-				exit(12);
-			
+				exit(12);	
 			strcpy(map->elem[index].value, value);
 			return;
-
 		}
 		index += 1;
 		index %= map->size;

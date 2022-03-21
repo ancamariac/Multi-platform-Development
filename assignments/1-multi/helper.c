@@ -4,8 +4,8 @@
 
 #define MAXLEN 256
 
-void defineMap(HashMap *map, char** line, FILE *in) {
-	
+void defineMap(HashMap *map, char **line, FILE *in) 
+{
 	static const char delimiters[] = "\t []{}<>=+-*/%!&|^.,:;()\\\n";
 	static const char multi_lines_delim[] = "\\t\n \\";
 
@@ -16,6 +16,7 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 	char *token = NULL;
 	char *result_m = NULL;
 	char *line_mdf = NULL;
+	char* key_cpy = NULL;
 
 	token = strtok(*line, delimiters);
 	key = strtok(NULL, delimiters);
@@ -32,12 +33,10 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 		return;
 	}
 		// multi lines define
-	if (value[strlen(value) - 1] == '\\') {
-		
+	if (value[strlen(value) - 1] == '\\') {		
 		parsed_value = malloc((strlen(value) + 1) *
 		sizeof(char));
-
-		char* key_cpy = malloc((strlen(key) + 1) * sizeof(char));
+		key_cpy = malloc((strlen(key) + 1) * sizeof(char));
 		strcpy(key_cpy, key);
 
 		if (!parsed_value)
@@ -49,8 +48,6 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 			parsed_value =
 			concatenate(parsed_value, line_mdf);
 		} while (line_mdf[strlen(line_mdf) - 2] == '\\');
-
-		
 		token = strtok(parsed_value, multi_lines_delim);
 		result_m = malloc((strlen(token) + 1) * sizeof(char));
 		if (!result_m)
@@ -61,8 +58,7 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 		while (token != NULL) {
 			token = strtok(NULL, multi_lines_delim);
 			check_token(token, &result_m);
-		}
-		
+		}	
 		insert(map, key_cpy, result_m);
 		free(result_m);
 		free(parsed_value);
@@ -76,22 +72,18 @@ void defineMap(HashMap *map, char** line, FILE *in) {
 		exit(12);
 	strcpy(parsed_value, value);
 	token = strtok(value, delimiters);
-	
 	while (token != NULL) {
 		another_value = get(map, token);
 		if (another_value != NULL) {
-			while (get(map, another_value)) {
+			while (get(map, another_value))
 				another_value = get(map, another_value);
-			}
 			parsed_value =
 			replace(parsed_value, token, another_value);
-		}
-			
+		}	
 		token = strtok(NULL, delimiters);
 	}
 	insert(map, key, parsed_value);
 	free(parsed_value);
-	
 }
 
 
@@ -271,9 +263,8 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 			} else if (!strncmp(line, "#define", 7)) {
 				defineMap(map, &line, in);
 			} else {
-				if (line[0] != '\n') {
+				if (line[0] != '\n')
 					fputs(line, out);
-				}
 			}
 		}
 	}
@@ -295,13 +286,11 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 
 	if (cond == 0) {
 		while ((read = getLine(&line, in)) != -1) {
-			
             if (!strncmp(line, "#else", 5)) {
 				free(line);
                 ifdef(in, out, map, 1, inFileName, directories, numDir);
 				return;
 			}
-		
 			if (!strncmp(line, "#endif", 6)) {
 				free(line);
 				return;
@@ -345,8 +334,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 				token = strtok(NULL, " \"");
 				inputDir = getDirectory(inFileName);
 				incFile =
-			    	getIncFile(token, directories, numDir, inputDir);
-
+			    getIncFile(token, directories, numDir, inputDir);
 				if (incFile != NULL) {
 					parseFile(incFile, out, map, directories,
 						  numDir, inFileName);
@@ -364,10 +352,9 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 
 				if (value != NULL)
 					token = value;
-				
 				if (!strcmp(token, "0"))
 					ifelse(in, out, map, 0, 0);
-				else 
+				else
 					ifelse(in, out, map, 1, 0);
 			} else {
 				if (line[0] != '\n')
@@ -493,7 +480,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 			if (get(map, token) != NULL)
 				ifdef(in, out, map, 0, inFileName, directories, numDir);
 			else
-				ifdef(in, out, map, 1, inFileName, directories, numDir);    
+				ifdef(in, out, map, 1, inFileName, directories, numDir); 
 		} else if (!strcmp(token, "#include")) {
 			token = strtok(line, "\"");
 			token = strtok(NULL, " \"");
