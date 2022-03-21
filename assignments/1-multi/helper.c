@@ -3,6 +3,7 @@
 #include "helper.h"
 
 #define MAXLEN 256
+#define IFDEF "#ifdef"
 
 void defineMap(HashMap *map, char **line, FILE *in)
 {
@@ -287,7 +288,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 	if (cond == 0) {
 			while ((read = getLine(&line, in)) != -1) {
 				if (!strncmp(line, "#else", 5)) {
-				free(line);
+					free(line);
 				ifdef(in, out, map, 1, inFileName, directories, numDir);
 				return;
 			}
@@ -314,7 +315,7 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				deleteKey(map, key);
-			} else if (!strncmp(line, "#ifdef", 6)) {
+			} else if (!strncmp(line, IFDEF, 6)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				if (get(map, key) != NULL)
@@ -468,7 +469,7 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 				ifelse(in, out, map, 0, 0);
 			else
 				ifelse(in, out, map, 1, 0);
-		} else if (!strcmp(token, "#ifdef")) {
+		} else if (!strcmp(token, IFDEF)) {
 			token = strtok(NULL, "\n");
 			if (get(map, token) != NULL)
 				ifdef(in, out, map, 1, inFileName, directories, numDir);
