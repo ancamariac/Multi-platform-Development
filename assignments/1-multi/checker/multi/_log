@@ -1,44 +1,15 @@
-==44698== Memcheck, a memory error detector
-==44698== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==44698== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==44698== Command: ./so-cpp _test/inputs/test24.in
-==44698== Parent PID: 44692
-==44698== 
-==44698== 
-==44698== Process terminating with default action of signal 2 (SIGINT)
-==44698==    at 0x4964EA9: open (open64.c:48)
-==44698==    by 0x48E7195: _IO_file_open (fileops.c:189)
-==44698==    by 0x48E7459: _IO_file_fopen@@GLIBC_2.2.5 (fileops.c:281)
-==44698==    by 0x48D9B0D: __fopen_internal (iofopen.c:75)
-==44698==    by 0x48D9B0D: fopen@@GLIBC_2.2.5 (iofopen.c:86)
-==44698==    by 0x10AE8B: main (main.c:559)
-==44698== 
-==44698== HEAP SUMMARY:
-==44698==     in use at exit: 591 bytes in 3 blocks
-==44698==   total heap usage: 3 allocs, 0 frees, 591 bytes allocated
-==44698== 
-==44698== 23 bytes in 1 blocks are still reachable in loss record 1 of 3
-==44698==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==44698==    by 0x10ACC9: getArgs (main.c:518)
-==44698==    by 0x10AE6B: main (main.c:556)
-==44698== 
-==44698== 96 bytes in 1 blocks are still reachable in loss record 2 of 3
-==44698==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==44698==    by 0x10B010: createHashMap (helper.c:15)
-==44698==    by 0x10AE2F: main (main.c:551)
-==44698== 
-==44698== 472 bytes in 1 blocks are still reachable in loss record 3 of 3
-==44698==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
-==44698==    by 0x48D9AAD: __fopen_internal (iofopen.c:65)
-==44698==    by 0x48D9AAD: fopen@@GLIBC_2.2.5 (iofopen.c:86)
-==44698==    by 0x10AE8B: main (main.c:559)
-==44698== 
-==44698== LEAK SUMMARY:
-==44698==    definitely lost: 0 bytes in 0 blocks
-==44698==    indirectly lost: 0 bytes in 0 blocks
-==44698==      possibly lost: 0 bytes in 0 blocks
-==44698==    still reachable: 591 bytes in 3 blocks
-==44698==         suppressed: 0 bytes in 0 blocks
-==44698== 
-==44698== For lists of detected and suppressed errors, rerun with: -s
-==44698== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==53504== Memcheck, a memory error detector
+==53504== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==53504== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==53504== Command: ./so-cpp _test/inputs/test37.in
+==53504== Parent PID: 53498
+==53504== 
+==53504== 
+==53504== HEAP SUMMARY:
+==53504==     in use at exit: 0 bytes in 0 blocks
+==53504==   total heap usage: 41 allocs, 41 frees, 13,770 bytes allocated
+==53504== 
+==53504== All heap blocks were freed -- no leaks are possible
+==53504== 
+==53504== For lists of detected and suppressed errors, rerun with: -s
+==53504== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
