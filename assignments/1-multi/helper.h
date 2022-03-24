@@ -9,7 +9,7 @@
 #include <string.h>
 #include "hashmap.h"
 
-void defineMap(HashMap *map, char** line, FILE *in);
+void defineMap(HashMap *map, char **line, FILE *in);
 
 int getLine(char **line, FILE *in);
 

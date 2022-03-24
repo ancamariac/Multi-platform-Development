@@ -1,7 +1,5 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
-
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 #include "helper.h"
-
 #define MAXLEN 256
 #define IFDEF "#ifdef"
 
@@ -33,13 +31,14 @@ void defineMap(HashMap *map, char **line, FILE *in)
 		free(value);
 		return;
 	}
-		// multi lines define
+	/* implementare multi lines define */
 	if (value[strlen(value) - 1] == '\\') {
 		parsed_value = malloc((strlen(value) + 1) *
 		sizeof(char));
 		key_cpy = malloc((strlen(key) + 1) * sizeof(char));
+		if (!key_cpy)
+			exit(12);
 		strcpy(key_cpy, key);
-
 		if (!parsed_value)
 			exit(12);
 
@@ -87,7 +86,7 @@ void defineMap(HashMap *map, char **line, FILE *in)
 	free(parsed_value);
 }
 
-
+/* reimplementare getline din stdio.h */
 int getLine(char **line, FILE *in)
 {
 	char readline[MAXLEN];
@@ -111,6 +110,8 @@ int getLine(char **line, FILE *in)
 	return len;
 }
 
+/* gasirea fisierului dat de directiva include 
+   daca nu il gaseste, returneaza NULL */
 FILE *getIncFile(char *fileName, char **directories, int numDir,
 		 char *currentDir)
 {
@@ -121,7 +122,8 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 	char *filePath = NULL;
 
 	filePath =
-	    malloc((strlen(currentDir) + strlen(fileName) + 1) * sizeof(char));
+	    malloc((strlen(currentDir) + strlen(fileName) + 1) *
+		sizeof(char));
 
 	if (!filePath)
 		exit(12);
@@ -159,6 +161,7 @@ FILE *getIncFile(char *fileName, char **directories, int numDir,
 	return NULL;
 }
 
+/* inlocuirea intr-o linie a lui key cu value */
 char *replace(char *line, char *key, char *value)
 {
 	int len = strlen(line);
@@ -272,7 +275,8 @@ void ifelse(FILE *in, FILE *out, HashMap *map, int cond, int done)
 	free(line);
 }
 
-void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char **directories, int numDir)
+void ifdef(FILE *in, FILE *out, HashMap *map, int cond,
+char *inFileName, char **directories, int numDir)
 {
 	char *line = NULL;
 	int read = 0;
@@ -289,7 +293,8 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 		while ((read = getLine(&line, in)) != -1) {
 			if (!strncmp(line, "#else", 5)) {
 				free(line);
-				ifdef(in, out, map, 1, inFileName, directories, numDir);
+				ifdef(in, out, map, 1,
+				inFileName, directories, numDir);
 				return;
 			}
 			if (!strncmp(line, "#endif", 6)) {
@@ -301,7 +306,8 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 		while ((read = getLine(&line, in)) != -1) {
 			if (!strncmp(line, "#else", 5)) {
 				free(line);
-				ifdef(in, out, map, 0, inFileName, directories, numDir);
+				ifdef(in, out, map, 0, inFileName, directories,
+				numDir);
 				return;
 			}
 			if (!strncmp(line, "#endif", 6)) {
@@ -319,16 +325,20 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				if (get(map, key) != NULL)
-					ifdef(in, out, map, 1, inFileName, directories, numDir);
+					ifdef(in, out, map, 1,
+					inFileName, directories, numDir);
 				else
-					ifdef(in, out, map, 0, inFileName, directories, numDir);
+					ifdef(in, out, map, 0,
+					inFileName, directories, numDir);
 			} else if (!strncmp(line, "#ifndef", 7)) {
 				key = strtok(line, delimiters);
 				key = strtok(NULL, delimiters);
 				if (get(map, key) != NULL)
-					ifdef(in, out, map, 0, inFileName, directories, numDir);
+					ifdef(in, out, map, 0,
+					inFileName, directories, numDir);
 				else
-					ifdef(in, out, map, 1, inFileName, directories, numDir);
+					ifdef(in, out, map, 1,
+					inFileName, directories, numDir);
 			} else if (!strncmp(line, "#include", 7)) {
 				token = strtok(line, "\"");
 				token = strtok(NULL, " \"");
@@ -364,6 +374,10 @@ void ifdef(FILE *in, FILE *out, HashMap *map, int cond, char *inFileName, char *
 	}
 }
 
+/*  functie utila pentru #include
+	returneaza numele directorului 
+	primeste ca argument calea acestuia
+*/
 char *getDirectory(char *path)
 {
 	char *dir = NULL;
@@ -381,7 +395,8 @@ char *getDirectory(char *path)
 		return dir;
 	}
 
-	dir = malloc(sizeof(char) * (strlen(path) - strlen(fileName) + 2));
+	dir = malloc(sizeof(char) * (strlen(path) -
+	strlen(fileName) + 2));
 
 	if (!dir)
 		exit(12);
@@ -420,6 +435,9 @@ void check_token(char *token, char **res)
 		*res = concatenate(*res, token);
 }
 
+/* analizarea fisierului de input si adaugarea in map
+   a stringurilor ce se afla dupa directivele existente 
+   la inceput de linie */
 void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	       int numDir, char *inFileName)
 {
@@ -472,21 +490,26 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 		} else if (!strcmp(token, IFDEF)) {
 			token = strtok(NULL, "\n");
 			if (get(map, token) != NULL)
-				ifdef(in, out, map, 1, inFileName, directories, numDir);
+				ifdef(in, out, map, 1,
+				inFileName, directories, numDir);
 			else
-				ifdef(in, out, map, 0, inFileName, directories, numDir);
+				ifdef(in, out, map, 0,
+				inFileName, directories, numDir);
 		} else if (!strcmp(token, "#ifndef")) {
 			token = strtok(NULL, "\n");
 			if (get(map, token) != NULL)
-				ifdef(in, out, map, 0, inFileName, directories, numDir);
+				ifdef(in, out, map, 0,
+				inFileName, directories, numDir);
 			else
-				ifdef(in, out, map, 1, inFileName, directories, numDir);
+				ifdef(in, out, map, 1, inFileName,
+				directories, numDir);
 		} else if (!strcmp(token, "#include")) {
 			token = strtok(line, "\"");
 			token = strtok(NULL, " \"");
 			inputDir = getDirectory(inFileName);
 			incFile =
-			    getIncFile(token, directories, numDir, inputDir);
+			    getIncFile(token, directories,
+				numDir, inputDir);
 
 			if (incFile != NULL) {
 				parseFile(incFile, out, map, directories,
@@ -516,8 +539,9 @@ void parseFile(FILE *in, FILE *out, HashMap *map, char **directories,
 	free(line);
 }
 
-char **getArgs(int argc, char **argv, char **input, char **output,
-HashMap *map, int *numDir)
+/* preluarea fiecarui argument din semnatura executabilului */
+char **getArgs(int argc, char **argv, char **input,
+char **output, HashMap *map, int *numDir)
 {
 	int currDir = 0;
 	char **directories = NULL;

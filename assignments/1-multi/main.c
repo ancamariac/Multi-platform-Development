@@ -1,8 +1,5 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
-
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 #include "helper.h"
-
-//HashMap createHashMap(int size);
 
 int main(int argc, char **argv)
 {
@@ -17,7 +14,8 @@ int main(int argc, char **argv)
 	FILE *outFile = NULL;
 
 	directories =
-	    getArgs(argc, argv, &inputFileName, &outputFileName, &map, &numDir);
+	    getArgs(argc, argv, &inputFileName,
+		&outputFileName, &map, &numDir);
 
 	if (inputFileName) {
 		inFile = fopen(inputFileName, "r");
@@ -33,10 +31,11 @@ int main(int argc, char **argv)
 		outFile = stdout;
 
 	if (!inputFileName)
-		parseFile(inFile, outFile, &map, directories, numDir, "");
+		parseFile(inFile, outFile, &map,
+		directories, numDir, "");
 	else
-		parseFile(inFile, outFile, &map, directories, numDir,
-			  inputFileName);
+		parseFile(inFile, outFile, &map,
+		directories, numDir, inputFileName);
 
 	fflush(inFile);
 	fclose(inFile);
