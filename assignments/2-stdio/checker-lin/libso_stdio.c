@@ -1,8 +1,8 @@
 #include "so_stdio.h"
 #include <fcntl.h>
 
-SO_FILE *so_fopen(const char *pathname, const char *mode) {
-
+SO_FILE *so_fopen(const char *pathname, const char *mode)
+{
     int fd = -1;
     int cursor = 0;
 
@@ -21,8 +21,14 @@ SO_FILE *so_fopen(const char *pathname, const char *mode) {
     else
         return NULL;
 
+    if (fd == -1)
+        return NULL;
+
     SO_FILE *file = malloc(sizeof(SO_FILE));
 
+    if (!file)
+        exit(12);
+        
     file->fd = fd;
     file->cursor = cursor;
 
