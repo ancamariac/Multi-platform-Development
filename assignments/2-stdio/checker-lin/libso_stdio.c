@@ -35,3 +35,13 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 
     return file;
 }
+
+int so_fileno(SO_FILE *stream)
+{
+    return stream->fd;
+}
+
+int so_fclose(SO_FILE *stream)
+{
+
+}
