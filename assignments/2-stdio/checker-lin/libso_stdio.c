@@ -1,5 +1,6 @@
 #include "so_stdio.h"
 #include <fcntl.h>
+#include <string.h>
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
@@ -28,7 +29,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 
     if (!file)
         exit(12);
-        
+
     file->fd = fd;
     file->cursor = cursor;
 
