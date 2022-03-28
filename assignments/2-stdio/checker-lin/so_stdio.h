@@ -30,7 +30,13 @@
 
 #define SO_EOF (-1)
 
-struct _so_file;
+#define BUFFER_SIZE 4096
+
+struct _so_file {
+    int fd;
+    int cursor;
+    char buffer[BUFFER_SIZE];
+};
 
 typedef struct _so_file SO_FILE;
 
