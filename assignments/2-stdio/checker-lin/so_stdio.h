@@ -33,9 +33,9 @@
 #define BUFFER_SIZE 4096
 
 struct _so_file {
-    int fd;
-    int cursor;
-    char buffer[BUFFER_SIZE];
+int fd;
+int cursor;
+char buffer[BUFFER_SIZE];
 };
 
 typedef struct _so_file SO_FILE;
