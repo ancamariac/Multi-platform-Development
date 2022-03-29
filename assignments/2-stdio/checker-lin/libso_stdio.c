@@ -36,9 +36,10 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->fd = fd;
     file->cursor = cursor;
     file->buffer_pos = 0;
-    file->size = st.st_size;
 
     fstat(file->fd, &st);
+
+    file->size = st.st_size;
 
     return file;
 }
@@ -90,9 +91,6 @@ int so_fgetc(SO_FILE *stream)
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-    if (!(stream->cursor >= 0) && !(stream->cursor <= stream->size))
-        return -1;
-
     if (whence == SEEK_SET)
         stream->cursor = offset;
     else if (whence == SEEK_CUR)
@@ -102,12 +100,15 @@ int so_fseek(SO_FILE *stream, long offset, int whence)
     else
         return -1;
 
+    if ((stream->cursor < 0) || (stream->cursor > stream->size))
+        return -1;
+
     return 0;
 }
 
 long so_ftell(SO_FILE *stream)
 {
-    return 0;
+    return stream->cursor + stream->buffer_pos;
 }
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
