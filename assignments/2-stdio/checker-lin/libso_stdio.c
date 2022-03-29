@@ -30,7 +30,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 
     SO_FILE *file = malloc(sizeof(SO_FILE));
 
-    fstat(file, &st);
+    fstat(file->fd, &st);
 
     if (!file)
         exit(12);
