@@ -108,7 +108,7 @@ int so_fseek(SO_FILE *stream, long offset, int whence)
 
 long so_ftell(SO_FILE *stream)
 {
-    return stream->cursor + stream->buffer_pos;
+    return stream->cursor;
 }
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
