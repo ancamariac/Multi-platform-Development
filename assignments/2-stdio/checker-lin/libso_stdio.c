@@ -43,6 +43,7 @@ int so_fileno(SO_FILE *stream)
 
 int so_fclose(SO_FILE *stream)
 {
+    free(stream);
     return 0;
 }
 
