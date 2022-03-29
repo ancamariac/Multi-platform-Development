@@ -41,7 +41,7 @@ int so_fileno(SO_FILE *stream)
     return stream->fd;
 }
 
-int so_fclose(SO_FILE *stream)
+/*int so_fclose(SO_FILE *stream)
 {
 
-}
+}*/ 
