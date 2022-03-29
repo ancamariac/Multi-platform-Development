@@ -43,7 +43,13 @@ int so_fileno(SO_FILE *stream)
 
 int so_fclose(SO_FILE *stream)
 {
+    stream->fd = close(stream->fd);
+
+    if (stream->fd == -1)
+        return SO_EOF;
+
     free(stream);
+    
     return 0;
 }
 
