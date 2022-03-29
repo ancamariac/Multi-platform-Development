@@ -36,6 +36,8 @@ struct _so_file {
 int fd;
 int cursor;
 char buffer[BUFFER_SIZE];
+int buffer_pos;
+int size;
 };
 
 typedef struct _so_file SO_FILE;

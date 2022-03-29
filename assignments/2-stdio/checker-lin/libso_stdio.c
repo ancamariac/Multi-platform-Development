@@ -1,11 +1,14 @@
 #include "so_stdio.h"
 #include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
     int fd = -1;
     int cursor = 0;
+    struct stat st; 
 
     if (strcmp(mode, "r") == 0)
         fd = open(pathname, O_RDONLY, 0666);
@@ -27,11 +30,16 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 
     SO_FILE *file = malloc(sizeof(SO_FILE));
 
+    fstat(file, &st);
+
     if (!file)
         exit(12);
 
     file->fd = fd;
     file->cursor = cursor;
+    file->buffer = "";
+    file->buffer_pos = 0;
+    file->size = st.st_size;
 
     return file;
 }
@@ -43,23 +51,55 @@ int so_fileno(SO_FILE *stream)
 
 int so_fclose(SO_FILE *stream)
 {
-    stream->fd = close(stream->fd);
+    int r = 0;
 
-    if (stream->fd == -1)
+    r = close(stream->fd);
+
+    if (r == -1)
         return SO_EOF;
 
     free(stream);
-    
+
     return 0;
 }
 
 int so_fflush(SO_FILE *stream)
 {
+    ssize_t n = 0;
+
+    if (stream->buffer_pos)
+        n = write(stream->fd, stream->buffer, stream->buffer_pos);
+    
+    stream->buffer_pos = 0;
+
+    if (n == -1)
+        return SO_EOF;
+
+    return 0;
+}
+
+int so_fgetc(SO_FILE *stream)
+{
+    ssize_t n = 0;
+
+    //so_fflush(stream);
+    
+    n = read(stream->fd, stream->buffer, stream->buffer_pos);
+
     return 0;
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
+    if (whence == SEEK_SET)
+        stream->cursor = offset;
+    else if (whence == SEEK_CUR)
+        stream->cursor += offset;
+    else if (whence == SEEK_END)
+        stream->cursor = stream->size + offset;
+    else
+        return -1;
+        
     return 0;
 }
 
@@ -74,11 +114,6 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 }
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
-{
-    return 0;
-}
-
-int so_fgetc(SO_FILE *stream)
 {
     return 0;
 }
