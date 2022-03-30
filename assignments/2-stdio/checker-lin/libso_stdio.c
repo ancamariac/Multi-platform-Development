@@ -53,7 +53,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 
     file->size = st.st_size;
 
-    printf("size: %ld\n", size);
+    printf("size: %ld\n", file->size);
 
     return file;
 }
@@ -166,7 +166,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
-        cnt ++;
+        cnt++;
     }
 
     return cnt / size;
