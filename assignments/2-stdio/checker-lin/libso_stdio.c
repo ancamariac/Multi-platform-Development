@@ -114,10 +114,10 @@ int so_fgetc(SO_FILE *stream)
         if (n < 0) {
             stream->err_ind = SO_EOF;
             return SO_EOF;
-        }
-
-        stream->cursor += 1;    
+        }   
     }
+
+    stream->cursor += 1; 
 
     return (int)(stream->buffer[(stream->cursor - 1) % BUFFER_SIZE]);
 }
