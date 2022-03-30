@@ -54,7 +54,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 
     file->size = st.st_size;
 
-    printf("size: %ld\n", file->size);
+    //printf("size: %ld\n", file->size);
 
     return file;
 }
@@ -100,17 +100,21 @@ int so_fflush(SO_FILE *stream)
 int so_fgetc(SO_FILE *stream)
 {
     ssize_t n = 0;
+    int chunk = (int)(stream->cursor / BUFFER_SIZE);
+    int pos = (int)(stream->cursor % BUFFER_SIZE);
     
     /* read a character from the stream and returns it */
 
     if (stream->cursor >= stream->size) {
-        stream->err_ind = SO_EOF;
+        printf("a intrat in eof 1\n");
+	printf("cursor : %ld\n", stream->cursor);
+	stream->err_ind = SO_EOF;
         return SO_EOF;
     }
 
     /* daca nu sunt in chunkul in care se face citirea */
-    if (!(stream->cursor / BUFFER_SIZE == stream->chunk_number)) {
-
+    if (!(chunk == stream->chunk_number)) {
+	 printf("cursor : %ld\n", stream->cursor);
         /* se pozitioneaza cursorul la caracterul care trebuie citit */
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
         lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
@@ -121,6 +125,7 @@ int so_fgetc(SO_FILE *stream)
 
         /* se verifica daca s-a reusit citirea */
         if (n < 0) {
+		printf("a intrat in eof 2\n");
             stream->err_ind = SO_EOF;
             return SO_EOF;
         }   
@@ -128,7 +133,7 @@ int so_fgetc(SO_FILE *stream)
 
     stream->cursor += 1; 
 
-    return (int)(stream->buffer[(stream->cursor - 1) % BUFFER_SIZE]);
+    return (int)(stream->buffer[pos]);
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
