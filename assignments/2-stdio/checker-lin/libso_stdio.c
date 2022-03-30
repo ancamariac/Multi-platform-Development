@@ -119,7 +119,7 @@ int so_fgetc(SO_FILE *stream)
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
     }
 
-    return (int)(stream->buffer[stream->cursor % BUFFER_SIZE]);
+    return (int)(stream->buffer[(stream->cursor - 1) % BUFFER_SIZE]);
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
