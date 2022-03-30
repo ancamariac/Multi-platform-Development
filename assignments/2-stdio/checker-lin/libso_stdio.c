@@ -110,12 +110,17 @@ int so_fgetc(SO_FILE *stream)
         /* citesc in buffer informatie cat pentru un chunk intreg de 4096 caractere */
         n = read(stream->fd, stream->buffer, BUFFER_SIZE);
 
+        stream->buffer_pos = n;
+
         /* se verifica daca s-a reusit citirea */
         if (n < 0) {
             stream->err_ind = SO_EOF;
             return SO_EOF;
         }   
     }
+
+    if (stream->buffer_pos < stream->cursor % BUFFER_SIZE) 
+        return SO_EOF;
 
     stream->cursor += 1; 
 
