@@ -137,7 +137,7 @@ int so_fputc(int c, SO_FILE *stream)
 int so_feof(SO_FILE *stream)
 {
     if (stream->cursor == stream->size)
-        return stream->cursor;
+        return 7;
 
     return 0;
 }
@@ -145,8 +145,8 @@ int so_feof(SO_FILE *stream)
 int so_ferror(SO_FILE *stream)
 {
     if (stream->err_ind)
-        return stream->err_ind;
-        
+        return 7;
+
     return 0;
 }
 
