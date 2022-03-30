@@ -13,6 +13,7 @@ int buffer_pos;
 long size;
 int err_ind;
 int chunk_number;
+const char *mode;
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
@@ -49,12 +50,14 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->buffer_pos = 0;
     file->err_ind = 0;
     file->chunk_number = -1;
+    file->mode = malloc((strlen(mode) + 1) * sizeof(char));
+    strcpy(file->mode, mode);
+
+    printf("%s", file->mode);
 
     fstat(file->fd, &st);
 
     file->size = st.st_size;
-
-    //printf("size: %ld\n", file->size);
 
     return file;
 }
@@ -200,7 +203,7 @@ int so_fputc(int c, SO_FILE *stream)
 
     stream->buffer_pos++;
     stream->cursor++;
-     
+
     return c;
 }
 
