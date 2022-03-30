@@ -107,14 +107,14 @@ int so_fgetc(SO_FILE *stream)
 
     if (stream->cursor >= stream->size) {
         printf("a intrat in eof 1\n");
-	printf("cursor : %ld\n", stream->cursor);
-	stream->err_ind = SO_EOF;
+	    printf("cursor : %ld\n", stream->cursor);
+	    stream->err_ind = SO_EOF;
         return SO_EOF;
     }
 
     /* daca nu sunt in chunkul in care se face citirea */
     if (!(chunk == stream->chunk_number)) {
-	 printf("cursor : %ld\n", stream->cursor);
+	    printf("cursor : %ld\n", stream->cursor);
         /* se pozitioneaza cursorul la caracterul care trebuie citit */
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
         lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
@@ -185,7 +185,23 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 int so_fputc(int c, SO_FILE *stream)
 {
-    return 0;
+    /* put a character into the stream->buffer */
+    unsigned char converted_c = (unsigned char)c;
+    
+    if (stream->buffer_pos == BUFFER_SIZE)
+        so_fflush(stream);
+
+    stream->buffer[stream->buffer_pos] = converted_c;
+
+    if (!stream->buffer[stream->buffer_pos]) {
+        stream->err_ind = SO_EOF;
+        return SO_EOF;
+    }
+
+    stream->buffer_pos++;
+    stream->cursor++;
+     
+    return c;
 }
 
 int so_feof(SO_FILE *stream)
