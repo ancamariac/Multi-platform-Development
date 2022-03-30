@@ -13,7 +13,7 @@ int buffer_pos;
 long size;
 int err_ind;
 int chunk_number;
-const char *mode;
+char mode[2];
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
@@ -50,7 +50,6 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->buffer_pos = 0;
     file->err_ind = 0;
     file->chunk_number = -1;
-    file->mode = malloc((strlen(mode) + 1) * sizeof(char));
     strcpy(file->mode, mode);
 
     printf("%s", file->mode);
