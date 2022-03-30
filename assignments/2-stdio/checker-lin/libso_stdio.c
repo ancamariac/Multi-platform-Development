@@ -103,8 +103,10 @@ int so_fgetc(SO_FILE *stream)
     /* daca nu sunt in chunkul in care se face citirea */
     if (!(stream->cursor / BUFFER_SIZE == stream->chunk_number)) {
 
-        if (stream->cursor > stream->size)
+        if (stream->cursor > stream->size) {
+	    stream->err_ind = SO_EOF;
             return SO_EOF;
+	}
 
         /* se pozitioneaza cursorul la caracterul care trebuie citit */
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
