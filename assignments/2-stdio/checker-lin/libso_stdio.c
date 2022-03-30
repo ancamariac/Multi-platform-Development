@@ -102,6 +102,10 @@ int so_fgetc(SO_FILE *stream)
 
     /* daca nu sunt in chunkul in care se face citirea */
     if (!(stream->cursor / BUFFER_SIZE == stream->chunk_number)) {
+
+        if (stream->cursor > stream->size)
+            return SO_EOF;
+
         /* se pozitioneaza cursorul la caracterul care trebuie citit */
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
         lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
@@ -155,9 +159,6 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
     while (cnt < size * nmemb) {
         var = so_fgetc(stream);
-
-        if (stream->cursor > stream->size)
-            return 0;
 
         if (var == SO_EOF)
             break;
