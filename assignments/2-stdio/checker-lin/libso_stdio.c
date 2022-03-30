@@ -156,8 +156,11 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     while (cnt < size * nmemb) {
         var = so_fgetc(stream);
 
-        if (var == SO_EOF)
+        if (stream->cursor > stream->size)
             return 0;
+
+        if (var == SO_EOF)
+            break;
         else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
