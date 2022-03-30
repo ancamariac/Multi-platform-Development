@@ -100,13 +100,13 @@ int so_fgetc(SO_FILE *stream)
     
     /* read a character from the stream and returns it */
 
+    if (stream->cursor > stream->size) {
+        stream->err_ind = SO_EOF;
+        return SO_EOF;
+    }
+
     /* daca nu sunt in chunkul in care se face citirea */
     if (!(stream->cursor / BUFFER_SIZE == stream->chunk_number)) {
-
-        if (stream->cursor > stream->size) {
-	    stream->err_ind = SO_EOF;
-            return SO_EOF;
-	}
 
         /* se pozitioneaza cursorul la caracterul care trebuie citit */
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
@@ -122,9 +122,6 @@ int so_fgetc(SO_FILE *stream)
             return SO_EOF;
         }   
     }
-
-    if (stream->buffer_pos < stream->cursor % BUFFER_SIZE) 
-        return SO_EOF;
 
     stream->cursor += 1; 
 
