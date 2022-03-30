@@ -117,7 +117,7 @@ int so_fgetc(SO_FILE *stream)
         }   
     }
 
-    if (stream->buffer_pos < stream->cursor % BUFFER_SIZE) 
+    if (stream->buffer_pos <= stream->cursor % BUFFER_SIZE) 
         return SO_EOF;
 
     stream->cursor += 1; 
