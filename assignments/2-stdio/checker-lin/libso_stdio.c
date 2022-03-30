@@ -53,6 +53,8 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 
     file->size = st.st_size;
 
+    printf("size: %ld\n", size);
+
     return file;
 }
 
