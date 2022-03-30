@@ -156,7 +156,7 @@ long so_ftell(SO_FILE *stream)
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
     size_t cnt = 0;
-    int var = 0;
+    long var = 0;
 
     while (cnt < size * nmemb) {
         var = so_fgetc(stream);
