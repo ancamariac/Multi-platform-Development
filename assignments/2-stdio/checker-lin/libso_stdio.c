@@ -105,7 +105,7 @@ int so_fgetc(SO_FILE *stream)
     /* daca nu sunt in chunkul in care se face citirea */
     if (!(stream->cursor / BUFFER_SIZE == stream->chunk_number)) {
         /* se pozitioneaza cursorul la caracterul care trebuie citit */
-        lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET)
+        lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
         /* citesc in buffer informatie cat pentru un chunk intreg de 4096 caractere */
         n = read(stream->fd, stream->buffer, BUFFER_SIZE);
 
@@ -116,7 +116,7 @@ int so_fgetc(SO_FILE *stream)
         }
 
         stream->cursor += 1;
-        stream->chunk_number = cursor / BUFFER_SIZE;
+        stream->chunk_number = stream->cursor / BUFFER_SIZE;
     }
 
     return (int)(stream->buffer[stream->cursor % BUFFER_SIZE]);
