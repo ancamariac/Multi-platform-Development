@@ -137,17 +137,14 @@ int so_fputc(int c, SO_FILE *stream)
 int so_feof(SO_FILE *stream)
 {
     if (stream->cursor == stream->size)
-        return 7;
+        return 1;
 
     return 0;
 }
 
 int so_ferror(SO_FILE *stream)
 {
-    if (stream->err_ind)
-        return 7;
-
-    return 0;
+    return stream->err_ind;
 }
 
 SO_FILE *so_popen(const char *command, const char *type)
