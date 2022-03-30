@@ -117,7 +117,7 @@ int so_fgetc(SO_FILE *stream)
         }   
     }
 
-    if (stream->buffer_pos <= stream->cursor % BUFFER_SIZE) 
+    if (stream->buffer_pos < stream->cursor % BUFFER_SIZE) 
         return SO_EOF;
 
     stream->cursor += 1; 
@@ -153,18 +153,18 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     int cnt = 0;
     int var = 0;
 
-    while (cnt < size *  nmemb) {
+    while (cnt < size * nmemb) {
         var = so_fgetc(stream);
 
-        if (var == SO_EOF)
-            break;
-        else
+        //if (var == SO_EOF)
+            //break;
+        //else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
         cnt ++;
     }
 
-    return cnt;
+    return cnt / size;
 }
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
