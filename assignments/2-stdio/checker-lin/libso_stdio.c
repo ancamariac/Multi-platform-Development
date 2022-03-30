@@ -104,7 +104,7 @@ int so_fgetc(SO_FILE *stream)
     if (!(stream->cursor / BUFFER_SIZE == stream->chunk_number)) {
 
         if (stream->cursor > stream->size)
-            return 0;
+            return SO_EOF;
 
         /* se pozitioneaza cursorul la caracterul care trebuie citit */
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
