@@ -4,6 +4,15 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+struct _so_file {
+int fd;
+int cursor;
+char buffer[BUFFER_SIZE];
+int buffer_pos;
+int size;
+int err_ind;
+};
+
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
     int fd = -1;
@@ -36,6 +45,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->fd = fd;
     file->cursor = cursor;
     file->buffer_pos = 0;
+    file->err_ind = 0;
 
     fstat(file->fd, &st);
 
@@ -81,8 +91,6 @@ int so_fflush(SO_FILE *stream)
 int so_fgetc(SO_FILE *stream)
 {
     ssize_t n = 0;
-
-    //so_fflush(stream);
     
     n = read(stream->fd, stream->buffer, stream->buffer_pos);
 
@@ -128,11 +136,17 @@ int so_fputc(int c, SO_FILE *stream)
 
 int so_feof(SO_FILE *stream)
 {
+    if (stream->cursor == stream->size)
+        return stream->cursor;
+
     return 0;
 }
 
 int so_ferror(SO_FILE *stream)
 {
+    if (stream->err_ind)
+        return stream->err_ind;
+        
     return 0;
 }
 
