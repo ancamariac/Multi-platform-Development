@@ -13,7 +13,7 @@ int buffer_pos;
 long size;
 int err_ind;
 int chunk_number;
-char mode[2];
+char mode[3];
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
@@ -52,7 +52,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->chunk_number = -1;
     strcpy(file->mode, mode);
 
-    printf("%s", file->mode);
+    //printf("mode : %s\n", file->mode);
 
     fstat(file->fd, &st);
 
@@ -69,6 +69,13 @@ int so_fileno(SO_FILE *stream)
 int so_fclose(SO_FILE *stream)
 {
     int r = 0;
+
+    if ((strcmp(stream->mode, "w") == 0) ||
+	(strcmp(stream->mode, "w+") == 0) ||
+	(strcmp(stream->mode, "a") == 0)) {
+	so_fflush(stream);
+	printf("aici\n");
+    }
 
     /* close the file and free the stream */
     r = close(stream->fd);
