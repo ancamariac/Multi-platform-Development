@@ -97,8 +97,6 @@ int so_fflush(SO_FILE *stream)
 int so_fgetc(SO_FILE *stream)
 {
     ssize_t n = 0;
-    int i = 0;
-    char letter;
     
     /* read a character from the stream and returns it */
 
@@ -152,7 +150,21 @@ long so_ftell(SO_FILE *stream)
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
-    return 0;
+    int cnt = 0;
+    int var = 0;
+
+    while (cnt < size *  nmemb) {
+        var = so_fgetc(stream);
+
+        if (var == SO_EOF)
+            break;
+        else
+            ptr[cnt] = var;
+
+        cnt ++;
+    }
+
+    return cnt;
 }
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
