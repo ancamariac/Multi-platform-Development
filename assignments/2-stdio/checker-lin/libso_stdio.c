@@ -159,7 +159,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         if (var == SO_EOF)
             break;
         else
-            *ptr[cnt] = (unsigned char)var;
+            *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
         cnt ++;
     }
