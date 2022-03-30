@@ -1,0 +1,18 @@
+./libso_stdio.c:24: ERROR:CODE_INDENT: code indent should use tabs where possible
+./libso_stdio.c:20: WARNING:LEADING_SPACE: please, no spaces at the start of a line
+./libso_stdio.c:167: ERROR:SPACING: space prohibited before that '++' (ctx:WxO)
+./libso_stdio.c:120: WARNING:SUSPECT_CODE_INDENT: suspect code indent for conditional statements (8, 12)
+./libso_stdio.c:21: ERROR:TRAILING_WHITESPACE: trailing whitespace
+00) Sources check...........................................failed  [ 0/95]
+01) Test fopen arguments....................................passed  [02/95]
+02) Test fgetc..............................................passed  [02/95]
+03) Test fgetc large file...................................passed  [02/95]
+04) Test fread small file...................................passed  [02/95]
+05) Test fread large file...................................passed  [02/95]
+06) Test chunked fread large file...........................passed  [02/95]
+07) Test fread huge file....................................failed  [ 0/95]
+08) Test chunked fread huge file............................failed  [ 0/95]
+09) Test fread huge file (random)...........................failed  [ 0/95]
+10) Test chunked fread huge file member size 4..............failed  [ 0/95]
+11) Test chunked fread huge file member size 8..............failed  [ 0/95]
+12) Test fputc..............................................failed  [ 0/95]

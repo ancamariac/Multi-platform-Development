@@ -6,10 +6,10 @@
 
 struct _so_file {
 int fd;
-int cursor;
+long cursor;
 char buffer[BUFFER_SIZE];
 int buffer_pos;
-int size;
+long size;
 int err_ind;
 int chunk_number;
 };
@@ -17,7 +17,7 @@ int chunk_number;
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
     int fd = -1;
-    int cursor = 0;
+    long cursor = 0;
     struct stat st; 
 
     if (strcmp(mode, "r") == 0)
@@ -100,7 +100,7 @@ int so_fgetc(SO_FILE *stream)
     
     /* read a character from the stream and returns it */
 
-    if (stream->cursor > stream->size) {
+    if (stream->cursor >= stream->size) {
         stream->err_ind = SO_EOF;
         return SO_EOF;
     }
@@ -153,7 +153,7 @@ long so_ftell(SO_FILE *stream)
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
-    int cnt = 0;
+    size_t cnt = 0;
     int var = 0;
 
     while (cnt < size * nmemb) {
