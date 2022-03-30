@@ -75,15 +75,17 @@ int so_fclose(SO_FILE *stream)
 
 int so_fflush(SO_FILE *stream)
 {
-    ssize_t n = 0;
+    int n = 0;
 
     if (stream->buffer_pos)
         n = write(stream->fd, stream->buffer, stream->buffer_pos);
-    
-    stream->buffer_pos = 0;
 
     if (n == -1)
         return SO_EOF;
+
+    stream->buffer_pos = 0;
+    stream->size += n;
+    stream->cursor += n; 
 
     return 0;
 }
@@ -91,6 +93,7 @@ int so_fflush(SO_FILE *stream)
 int so_fgetc(SO_FILE *stream)
 {
     ssize_t n = 0;
+    char letter;
     
     n = read(stream->fd, stream->buffer, stream->buffer_pos);
 
