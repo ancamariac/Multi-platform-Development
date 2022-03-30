@@ -11,6 +11,7 @@ char buffer[BUFFER_SIZE];
 int buffer_pos;
 int size;
 int err_ind;
+int chunk_number;
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
@@ -46,6 +47,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->cursor = cursor;
     file->buffer_pos = 0;
     file->err_ind = 0;
+    file->chunk_number = -1;
 
     fstat(file->fd, &st);
 
@@ -63,6 +65,7 @@ int so_fclose(SO_FILE *stream)
 {
     int r = 0;
 
+    /* close the file and free the stream */
     r = close(stream->fd);
 
     if (r == -1)
@@ -77,6 +80,7 @@ int so_fflush(SO_FILE *stream)
 {
     int n = 0;
 
+    /* empty the buffer and write to file */
     if (stream->buffer_pos)
         n = write(stream->fd, stream->buffer, stream->buffer_pos);
 
@@ -93,15 +97,34 @@ int so_fflush(SO_FILE *stream)
 int so_fgetc(SO_FILE *stream)
 {
     ssize_t n = 0;
+    int i = 0;
     char letter;
     
-    n = read(stream->fd, stream->buffer, stream->buffer_pos);
+    /* read a character from the stream and returns it */
 
-    return 0;
+    /* daca nu sunt in chunkul in care se face citirea */
+    if (!(stream->cursor / BUFFER_SIZE == stream->chunk_number)) {
+        /* se pozitioneaza cursorul la caracterul care trebuie citit */
+        lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET)
+        /* citesc in buffer informatie cat pentru un chunk intreg de 4096 caractere */
+        n = read(stream->fd, stream->buffer, BUFFER_SIZE);
+
+        /* se verifica daca s-a reusit citire */
+        if (n < 0) {
+            stream->err_ind = SO_EOF;
+            return SO_EOF;
+        }
+
+        stream->cursor += 1;
+        stream->chunk_number = cursor / BUFFER_SIZE;
+    }
+
+    return (int)(stream->buffer[stream->cursor % BUFFER_SIZE]);
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
+    /* sets the file cursor */
     if (whence == SEEK_SET)
         stream->cursor = offset;
     else if (whence == SEEK_CUR)
