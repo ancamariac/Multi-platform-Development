@@ -194,7 +194,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     int char_pos = 0;
 
     while (cnt < size * nmemb) {
-        character = (unsigned char *)ptr[cnt + char_pos];
+        character = *(unsigned char *)(ptr[cnt + char_pos]);
         var = so_fputc(character, stream);
 
         char_pos++;
@@ -202,10 +202,10 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         if (char_pos == size)
             break;
 
-        if (var == SO_EOF)
+        if (var == SO_EOF) {
+		printf("aici sunt\n");
             break;
-        else
-            *(unsigned char *)(ptr + cnt) = (unsigned char)var;
+	}
 
         cnt++;
     }
