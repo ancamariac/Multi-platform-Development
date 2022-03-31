@@ -121,20 +121,19 @@ int so_fgetc(SO_FILE *stream)
         return SO_EOF;
     }
 
-    /* daca nu sunt in chunkul in care se face citirea */
+    /* check if that's the chunk for reading */
     if (!(chunk == stream->chunk_number)) {
 	    printf("cursor : %ld\n", stream->cursor);
-        /* se pozitioneaza cursorul la caracterul care trebuie citit */
+        /* place the cursor at the character to be read */
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
         lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
-        /* citesc in buffer informatie cat pentru un chunk intreg de 4096 caractere */
+        /* place in the buffer a chunk of BUFFER_SIZE characters */
         n = read(stream->fd, stream->buffer, BUFFER_SIZE);
 
         stream->buffer_pos = n;
 
-        /* se verifica daca s-a reusit citirea */
         if (n < 0) {
-		printf("a intrat in eof 2\n");
+		    printf("a intrat in eof 2\n");
             stream->err_ind = SO_EOF;
             return SO_EOF;
         }   
@@ -189,7 +188,21 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
-    return 0;
+    size_t cnt = 0;
+    long var = 0;
+
+    while (cnt < size * nmemb) {
+        var = so_fputc(stream);
+
+        if (var == SO_EOF)
+            break;
+        else
+            *(unsigned char *)(ptr + cnt) = (unsigned char)var;
+
+        cnt++;
+    }
+
+    return cnt / size;
 }
 
 int so_fputc(int c, SO_FILE *stream)
