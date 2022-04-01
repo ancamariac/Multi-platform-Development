@@ -73,7 +73,7 @@ int so_fclose(SO_FILE *stream)
     if (((strcmp(stream->mode, "w") == 0) ||
 	(strcmp(stream->mode, "w+") == 0) ||
 	(strcmp(stream->mode, "a") == 0)) &&
-    (stream->last_op != "r")) {
+    (stream->last_op != 'r')) {
 	    check_fflush = so_fflush(stream);
     }
 
@@ -111,7 +111,7 @@ int so_fgetc(SO_FILE *stream)
 
     /* read a character from the stream and returns it */
 
-    if (stream->last_op == "w")
+    if (stream->last_op == 'w')
         so_fflush(stream);
 
     if (stream->cursor == stream->size + 1) {
@@ -139,7 +139,7 @@ int so_fgetc(SO_FILE *stream)
         }
     }
 
-    stream->last_op = "r";
+    stream->last_op = 'r';
     stream->cursor += 1;
 
     return (int)(stream->buffer[pos]);
@@ -223,7 +223,7 @@ int so_fputc(int c, SO_FILE *stream)
     stream->buffer_pos++;
     stream->cursor++;
     stream->size++;
-    stream->last_op = "w";
+    stream->last_op = 'w';
 
     return c;
 }
