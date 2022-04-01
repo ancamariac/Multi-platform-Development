@@ -100,8 +100,6 @@ int so_fflush(SO_FILE *stream)
         return SO_EOF;
 
     stream->buffer_pos = 0;
-    stream->size += n;
-    stream->cursor += n;
 
     return 0;
 }
@@ -218,13 +216,14 @@ int so_fputc(int c, SO_FILE *stream)
 
     stream->buffer[stream->buffer_pos] = converted_c;
 
-    if (!stream->buffer[stream->buffer_pos]) {
+    /*if (!stream->buffer[stream->buffer_pos]) {
         stream->err_ind = SO_EOF;
         return SO_EOF;
-    }
+    }*/
 
     stream->buffer_pos++;
     stream->cursor++;
+    stream->size++;
 
     return c;
 }
