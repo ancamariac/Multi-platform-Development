@@ -74,7 +74,7 @@ int so_fclose(SO_FILE *stream)
 	(strcmp(stream->mode, "w+") == 0) ||
 	(strcmp(stream->mode, "a") == 0)) {
 	so_fflush(stream);
-	printf("aici\n");
+	//printf("aici\n");
     }
 
     /* close the file and free the stream */
@@ -188,7 +188,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
-    /*size_t cnt = 0;
+    size_t cnt = 0;
     long var = 0;
     unsigned char character;
     int char_pos = 0;
@@ -210,24 +210,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         cnt++;
     }
 
-    return cnt / size;*/
-
-    unsigned char *memory_zone = (unsigned char *)ptr;
-	int nr_elements_written = 0;
-
-	/* datele din zona de memorie mentionata se vor scrie in buffer-ul intern cu ajutorul functiei fputc */
-	for (int i = 0; i < nmemb; i++) {
-		for (int j = 0; j < size; j++) {
-			unsigned char byte = memory_zone[i * size + j];
-			int ret = so_fputc(byte, stream);
-
-			if (ret == SO_EOF)
-				return 0;
-		}
-		nr_elements_written++;
-	}
-
-	return nr_elements_written;
+    return cnt - size;
 }
 
 int so_fputc(int c, SO_FILE *stream)
