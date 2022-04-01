@@ -14,7 +14,7 @@ long size;
 int err_ind;
 int chunk_number;
 char mode[3];
-char last_op[2];
+char last_op;
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
@@ -73,7 +73,7 @@ int so_fclose(SO_FILE *stream)
     if (((strcmp(stream->mode, "w") == 0) ||
 	(strcmp(stream->mode, "w+") == 0) ||
 	(strcmp(stream->mode, "a") == 0)) &&
-    strcmp(stream->last_op, "r") != 0) {
+    (stream->last_op != "r")) {
 	    check_fflush = so_fflush(stream);
     }
 
@@ -111,11 +111,13 @@ int so_fgetc(SO_FILE *stream)
 
     /* read a character from the stream and returns it */
 
+    if (stream->last_op == "w")
+        so_fflush(stream);
+
     if (stream->cursor == stream->size + 1) {
-        //printf("a intrat in eof 1\n");
 	    //printf("cursor : %ld\n", stream->cursor);
 	    stream->err_ind = SO_EOF;
-	printf("abcd\n");
+	    printf("abcd\n");
         return SO_EOF;
     }
 
@@ -137,7 +139,7 @@ int so_fgetc(SO_FILE *stream)
         }
     }
 
-    strcpy(stream->last_op, "r");
+    stream->last_op = "r";
     stream->cursor += 1;
 
     return (int)(stream->buffer[pos]);
@@ -221,7 +223,7 @@ int so_fputc(int c, SO_FILE *stream)
     stream->buffer_pos++;
     stream->cursor++;
     stream->size++;
-    strcpy(stream->last_op, "w");
+    stream->last_op = "w";
 
     return c;
 }
