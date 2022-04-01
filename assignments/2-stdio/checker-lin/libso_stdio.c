@@ -71,7 +71,7 @@ int so_fclose(SO_FILE *stream)
     int r = 0;
 
     if (stream->last_op == 'w')
-	    check_fflush = so_fflush(stream);
+	    so_fflush(stream);
 
     /* close the file and free the stream */
     r = close(stream->fd);
@@ -180,10 +180,13 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         var = so_fgetc(stream);
 
         if (var == SO_EOF) {
-            so_fgetc(stream);
-            break;
-        }            
-        else
+            lseek(stream->fd, cnt, SEEK_SET);
+            n = read(stream->fd, stream->buffer, BUFFER_SIZE);
+            if (n == 0) {
+                stream->err_ind = SO_EOF;
+                return cnt / size;
+            }
+        } else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
         cnt++;
