@@ -71,12 +71,8 @@ int so_fclose(SO_FILE *stream)
     int r = 0;
     int check_fflush = 0;
 
-    if (((strcmp(stream->mode, "w") == 0) ||
-	(strcmp(stream->mode, "w+") == 0) ||
-	(strcmp(stream->mode, "a") == 0)) &&
-    (stream->last_op != 'r')) {
+    if (stream->last_op == 'w')
 	    check_fflush = so_fflush(stream);
-    }
 
     /* close the file and free the stream */
     r = close(stream->fd);
@@ -148,7 +144,7 @@ int so_fgetc(SO_FILE *stream)
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-    if (stream->last_op == "w")
+    if (stream->last_op == 'w')
         so_fflush(stream);
 
     /* sets the file cursor */
@@ -216,7 +212,10 @@ int so_fputc(int c, SO_FILE *stream)
 {
     /* put a character into the stream->buffer */
     unsigned char converted_c = (unsigned char)c;
-    
+
+    if (stream->last_op == 'r')
+	stream->buffer_pos = 0;
+
     if (stream->buffer_pos == BUFFER_SIZE)
         so_fflush(stream);
 
