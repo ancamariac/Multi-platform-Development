@@ -197,10 +197,10 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
         var = so_fputc(character, stream);
 
-        if (var == SO_EOF) {
+        /*if (var == SO_EOF) {
 		    //printf("radarada\n");
             break;
-	    }
+	    }*/
 
         cnt++;
     }
