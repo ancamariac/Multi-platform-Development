@@ -71,14 +71,14 @@ int so_fclose(SO_FILE *stream)
     int r = 0;
     int check_fflush = 0;
 
-    //if ((strcmp(stream->mode, "w") == 0) ||
-	//(strcmp(stream->mode, "w+") == 0) ||
-	//(strcmp(stream->mode, "a") == 0)) {
-	check_fflush = so_fflush(stream);
-	//printf("aici\n");
-    //}
+    if ((strcmp(stream->mode, "w") == 0) ||
+	(strcmp(stream->mode, "w+") == 0) ||
+	(strcmp(stream->mode, "a") == 0)) {
+	    check_fflush = so_fflush(stream);
+	    //printf("aici\n");
+    }
 
-    if (check_fflush == SO_EOF) {
+    /*if (check_fflush == SO_EOF) {
         int check_close = close(stream->fd);
         free(stream);
 
@@ -86,7 +86,7 @@ int so_fclose(SO_FILE *stream)
             return SO_EOF;
         }
         return SO_EOF;
-    }
+    }*/
 
     /* close the file and free the stream */
     r = close(stream->fd);
