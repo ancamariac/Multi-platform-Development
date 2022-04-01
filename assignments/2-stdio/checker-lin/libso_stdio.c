@@ -52,6 +52,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->err_ind = 0;
     file->chunk_number = -1;
     strcpy(file->mode, mode);
+    file->last_op = 'r';
 
     fstat(file->fd, &st);
 
