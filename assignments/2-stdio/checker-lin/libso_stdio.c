@@ -114,11 +114,11 @@ int so_fgetc(SO_FILE *stream)
 
     /* read a character from the stream and returns it */
 
-    if (stream->cursor == stream->size + 1) {
+    if (stream->cursor == stream->size) {
         //printf("a intrat in eof 1\n");
 	    //printf("cursor : %ld\n", stream->cursor);
 	    stream->err_ind = SO_EOF;
-	printf("abcd\n");
+	    printf("abcd\n");
         return SO_EOF;
     }
 
@@ -134,7 +134,7 @@ int so_fgetc(SO_FILE *stream)
         stream->buffer_pos = n;
 
         if (n == -1) {
-	    printf("efghi\n");
+	        printf("efghi\n");
             stream->err_ind = SO_EOF;
             return SO_EOF;
         }
@@ -197,11 +197,6 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
         var = so_fputc(character, stream);
 
-        if (var == SO_EOF) {
-		    //printf("radarada\n");
-            break;
-	    }
-
         cnt++;
     }
 
@@ -218,7 +213,7 @@ int so_fputc(int c, SO_FILE *stream)
 
     stream->buffer[stream->buffer_pos] = converted_c;
 
-    if (!stream->buffer[stream->buffer_pos]) {
+    if (stream->buffer[stream->buffer_pos] < 0) {
         stream->err_ind = SO_EOF;
         return SO_EOF;
     }
