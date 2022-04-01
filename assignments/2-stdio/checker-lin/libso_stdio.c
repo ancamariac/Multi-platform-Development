@@ -122,7 +122,7 @@ int so_fgetc(SO_FILE *stream)
     if (!(chunk == stream->chunk_number)) {
 	    //printf("cursor : %ld\n", stream->cursor);
         /* place the cursor at the character to be read */
-        stream->chunk_number = stream->cursor / BUFFER_SIZE;
+        stream->chunk_number = chunk;
         lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
         /* place in the buffer a chunk of BUFFER_SIZE characters */
         n = read(stream->fd, stream->buffer, BUFFER_SIZE);
