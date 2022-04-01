@@ -181,11 +181,12 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
         if (var == SO_EOF) {
             lseek(stream->fd, cnt, SEEK_SET);
-            n = read(stream->fd, stream->buffer, BUFFER_SIZE);
+            int n = read(stream->fd, stream->buffer, BUFFER_SIZE);
             if (n == 0) {
                 stream->err_ind = SO_EOF;
                 return cnt / size;
-            }
+            } else
+		break;
         } else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
