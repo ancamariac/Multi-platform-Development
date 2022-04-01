@@ -129,7 +129,7 @@ int so_fgetc(SO_FILE *stream)
 
         stream->buffer_pos = n;
 
-        if (n == -1) {
+        if (n == -1 || n < stream->buffer_pos) {
 	    printf("efghi\n");
             stream->err_ind = SO_EOF;
             return SO_EOF;
@@ -199,12 +199,11 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
     size_t cnt = 0;
-    int var = 0;
 
     while (cnt < size * nmemb) {
         unsigned char character = *(unsigned char *)(ptr + cnt);
 
-        var = so_fputc(character, stream);
+        so_fputc(character, stream);
 
         cnt++;
     }
