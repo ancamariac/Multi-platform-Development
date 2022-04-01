@@ -69,22 +69,29 @@ int so_fileno(SO_FILE *stream)
 int so_fclose(SO_FILE *stream)
 {
     int r = 0;
+    int check_fflush = 0;
 
-    if ((strcmp(stream->mode, "w") == 0) ||
-	(strcmp(stream->mode, "w+") == 0) ||
-	(strcmp(stream->mode, "a") == 0)) {
-	so_fflush(stream);
+    //if ((strcmp(stream->mode, "w") == 0) ||
+	//(strcmp(stream->mode, "w+") == 0) ||
+	//(strcmp(stream->mode, "a") == 0)) {
+	check_fflush = so_fflush(stream);
 	//printf("aici\n");
+    //}
+
+    if (check_fflush == SO_EOF) {
+        return SO_EOF;
     }
 
     /* close the file and free the stream */
     r = close(stream->fd);
 
-    if (r == -1)
+    if (r == SO_EOF)
         return SO_EOF;
 
-    free(stream);
-
+    if (stream) {
+        free(stream);
+    }
+    
     return 0;
 }
 
