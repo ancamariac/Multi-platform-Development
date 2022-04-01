@@ -161,6 +161,9 @@ int so_fseek(SO_FILE *stream, long offset, int whence)
     if ((stream->cursor < 0) || (stream->cursor > stream->size))
         return -1;
 
+    lseek(stream->fd, stream->cursor, SEEK_SET);
+    stream->chunk_number = -1;
+
     return 0;
 }
 
@@ -217,7 +220,7 @@ int so_fputc(int c, SO_FILE *stream)
     if (stream->last_op == 'r')
 	stream->buffer_pos = 0;
 
-    if (stream->buffer_pos == BUFFER_SIZE)
+    if (stream->buffer_pos == BUFFER_SIZE - 1)
         so_fflush(stream);
 
     stream->buffer[stream->buffer_pos] = converted_c;
