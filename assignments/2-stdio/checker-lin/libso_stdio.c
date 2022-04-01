@@ -75,7 +75,6 @@ int so_fclose(SO_FILE *stream)
 	(strcmp(stream->mode, "w+") == 0) ||
 	(strcmp(stream->mode, "a") == 0)) {
 	    check_fflush = so_fflush(stream);
-	    //printf("aici\n");
     }
 
     /* close the file and free the stream */
@@ -133,7 +132,7 @@ int so_fgetc(SO_FILE *stream)
 
         stream->buffer_pos = n;
 
-        if (n == -1) {
+        if (n == SO_EOF) {
 	        printf("efghi\n");
             stream->err_ind = SO_EOF;
             return SO_EOF;
@@ -175,6 +174,9 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
     while (cnt < size * nmemb) {
         var = so_fgetc(stream);
+
+        if (so_feof(stream) == 1)
+            return 0;
 
         if (var == SO_EOF)
             break;
