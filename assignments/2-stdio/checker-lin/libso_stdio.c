@@ -81,8 +81,10 @@ int so_fclose(SO_FILE *stream)
     r = close(stream->fd);
     free(stream);
 
-    if (r == SO_EOF)
+    if (r == SO_EOF) {
+        stream->err_ind = SO_EOF;
         return SO_EOF;
+    }
 
     return 0;
 }
@@ -95,8 +97,10 @@ int so_fflush(SO_FILE *stream)
     if (stream->buffer_pos)
         n = write(stream->fd, stream->buffer, stream->buffer_pos);
 
-    if (n == -1)
+    if (n == -1) {
+        stream->err_ind = SO_EOF;
         return SO_EOF;
+    }
 
     stream->buffer_pos = 0;
     stream->size += n;
@@ -157,7 +161,7 @@ int so_fseek(SO_FILE *stream, long offset, int whence)
         return -1;
 
     if ((stream->cursor < 0) || (stream->cursor > stream->size))
-        return -1;
+        return SO_EOF;
 
     return 0;
 }
@@ -175,18 +179,16 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     while (cnt < size * nmemb) {
         var = so_fgetc(stream);
 
-        if (so_feof(stream) == 1)
-            return 0;
-
-        if (var == SO_EOF)
+        if (var == SO_EOF) {
+            stream->err_ind = SO_EOF;
             break;
-        else
+        } else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
         cnt++;
     }
 
-    return cnt;
+    return cnt / size;
 }
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
