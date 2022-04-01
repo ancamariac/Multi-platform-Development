@@ -78,23 +78,13 @@ int so_fclose(SO_FILE *stream)
 	    //printf("aici\n");
     }
 
-    /*if (check_fflush == SO_EOF) {
-        int check_close = close(stream->fd);
-        free(stream);
-
-        if (check_close == SO_EOF) {
-            return SO_EOF;
-        }
-        return SO_EOF;
-    }*/
-
     /* close the file and free the stream */
     r = close(stream->fd);
     free(stream);
 
     if (r == SO_EOF)
         return SO_EOF;
-    
+
     return 0;
 }
 
@@ -111,7 +101,7 @@ int so_fflush(SO_FILE *stream)
 
     stream->buffer_pos = 0;
     stream->size += n;
-    stream->cursor += n; 
+    stream->cursor += n;
 
     return 0;
 }
@@ -121,13 +111,14 @@ int so_fgetc(SO_FILE *stream)
     ssize_t n = 0;
     int chunk = (int)(stream->cursor / BUFFER_SIZE);
     int pos = (int)(stream->cursor % BUFFER_SIZE);
-    
+
     /* read a character from the stream and returns it */
 
-    if (stream->cursor >= stream->size) {
+    if (stream->cursor == stream->size + 1) {
         //printf("a intrat in eof 1\n");
 	    //printf("cursor : %ld\n", stream->cursor);
 	    stream->err_ind = SO_EOF;
+	printf("abcd\n");
         return SO_EOF;
     }
 
@@ -142,14 +133,14 @@ int so_fgetc(SO_FILE *stream)
 
         stream->buffer_pos = n;
 
-        if (n < 0) {
-		    //printf("a intrat in eof 2\n");
+        if (n == -1) {
+	    printf("efghi\n");
             stream->err_ind = SO_EOF;
             return SO_EOF;
-        }   
+        }
     }
 
-    stream->cursor += 1; 
+    stream->cursor += 1;
 
     return (int)(stream->buffer[pos]);
 }
