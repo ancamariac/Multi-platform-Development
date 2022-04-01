@@ -148,7 +148,8 @@ int so_fgetc(SO_FILE *stream)
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-    so_fflush(stream);
+    if (stream->last_op == "w")
+        so_fflush(stream);
 
     /* sets the file cursor */
     if (whence == SEEK_SET)
