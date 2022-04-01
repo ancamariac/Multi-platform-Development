@@ -96,6 +96,7 @@ int so_fflush(SO_FILE *stream)
         return SO_EOF;
 
     stream->buffer_pos = 0;
+    stream->last_op = 'r';
 
     return 0;
 }
