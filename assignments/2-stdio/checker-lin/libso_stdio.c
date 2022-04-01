@@ -69,7 +69,6 @@ int so_fileno(SO_FILE *stream)
 int so_fclose(SO_FILE *stream)
 {
     int r = 0;
-    int check_fflush = 0;
 
     if (stream->last_op == 'w')
 	    check_fflush = so_fflush(stream);
@@ -180,8 +179,10 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     while (cnt < size * nmemb) {
         var = so_fgetc(stream);
 
-        if (var == SO_EOF)
+        if (var == SO_EOF) {
+            so_fgetc(stream);
             break;
+        }            
         else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
@@ -200,11 +201,6 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         unsigned char character = *(unsigned char *)(ptr + cnt);
 
         var = so_fputc(character, stream);
-
-        /*if (var == SO_EOF) {
-		    //printf("radarada\n");
-            break;
-	    }*/
 
         cnt++;
     }
