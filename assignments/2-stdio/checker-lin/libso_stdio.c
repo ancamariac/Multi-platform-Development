@@ -79,18 +79,21 @@ int so_fclose(SO_FILE *stream)
     //}
 
     if (check_fflush == SO_EOF) {
+        int check_close = close(stream->fd);
+        free(stream);
+
+        if (check_close == SO_EOF) {
+            return SO_EOF;
+        }
         return SO_EOF;
     }
 
     /* close the file and free the stream */
     r = close(stream->fd);
+    free(stream);
 
     if (r == SO_EOF)
         return SO_EOF;
-
-    if (stream) {
-        free(stream);
-    }
     
     return 0;
 }
