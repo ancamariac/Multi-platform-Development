@@ -20,7 +20,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
     int fd = -1;
     long cursor = 0;
-    struct stat st; 
+    struct stat st;
 
     if (strcmp(mode, "r") == 0)
         fd = open(pathname, O_RDONLY, 0666);
@@ -115,15 +115,15 @@ int so_fgetc(SO_FILE *stream)
     /* read a character from the stream and returns it */
 
     if (stream->cursor >= stream->size) {
-        printf("a intrat in eof 1\n");
-	    printf("cursor : %ld\n", stream->cursor);
+        //printf("a intrat in eof 1\n");
+	    //printf("cursor : %ld\n", stream->cursor);
 	    stream->err_ind = SO_EOF;
         return SO_EOF;
     }
 
     /* check if that's the chunk for reading */
     if (!(chunk == stream->chunk_number)) {
-	    printf("cursor : %ld\n", stream->cursor);
+	    //printf("cursor : %ld\n", stream->cursor);
         /* place the cursor at the character to be read */
         stream->chunk_number = stream->cursor / BUFFER_SIZE;
         lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
@@ -133,7 +133,7 @@ int so_fgetc(SO_FILE *stream)
         stream->buffer_pos = n;
 
         if (n < 0) {
-		    printf("a intrat in eof 2\n");
+		    //printf("a intrat in eof 2\n");
             stream->err_ind = SO_EOF;
             return SO_EOF;
         }   
@@ -192,11 +192,12 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     long var = 0;
 
     while (cnt < size * nmemb) {
-        unsigned char character = *(unsigned char*)(ptr + cnt);
+        unsigned char character = *(unsigned char *)(ptr + cnt);
+
         var = so_fputc(character, stream);
 
         if (var == SO_EOF) {
-		    printf("radarada\n");
+		    //printf("radarada\n");
             break;
 	    }
 
