@@ -14,6 +14,7 @@ long size;
 int err_ind;
 int chunk_number;
 char mode[3];
+char last_op[2];
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
@@ -52,8 +53,6 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->chunk_number = -1;
     strcpy(file->mode, mode);
 
-    //printf("mode : %s\n", file->mode);
-
     fstat(file->fd, &st);
 
     file->size = st.st_size;
@@ -71,11 +70,11 @@ int so_fclose(SO_FILE *stream)
     int r = 0;
     int check_fflush = 0;
 
-    if ((strcmp(stream->mode, "w") == 0) ||
+    if (((strcmp(stream->mode, "w") == 0) ||
 	(strcmp(stream->mode, "w+") == 0) ||
-	(strcmp(stream->mode, "a") == 0)) {
+	(strcmp(stream->mode, "a") == 0)) &&
+    strcmp(stream->last_op, "r") != 0) {
 	    check_fflush = so_fflush(stream);
-	    //printf("aici\n");
     }
 
     /* close the file and free the stream */
@@ -138,6 +137,7 @@ int so_fgetc(SO_FILE *stream)
         }
     }
 
+    strcpy(stream->last_op, "r");
     stream->cursor += 1;
 
     return (int)(stream->buffer[pos]);
@@ -145,9 +145,7 @@ int so_fgetc(SO_FILE *stream)
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-    int check = so_fflush(stream);
-
-   // if (check)
+    so_fflush(stream);
 
     /* sets the file cursor */
     if (whence == SEEK_SET)
@@ -220,14 +218,10 @@ int so_fputc(int c, SO_FILE *stream)
 
     stream->buffer[stream->buffer_pos] = converted_c;
 
-    /*if (!stream->buffer[stream->buffer_pos]) {
-        stream->err_ind = SO_EOF;
-        return SO_EOF;
-    }*/
-
     stream->buffer_pos++;
     stream->cursor++;
     stream->size++;
+    strcpy(stream->last_op, "w");
 
     return c;
 }
