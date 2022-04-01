@@ -112,7 +112,7 @@ int so_fgetc(SO_FILE *stream)
     if (stream->last_op == 'w')
         so_fflush(stream);
 
-    if (stream->cursor == stream->size + 1) {
+    if (stream->cursor == stream->size) {
 	    //printf("cursor : %ld\n", stream->cursor);
 	    stream->err_ind = SO_EOF;
 	    printf("abcd\n");
