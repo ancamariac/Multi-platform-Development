@@ -183,34 +183,27 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         cnt++;
     }
 
-    return cnt / size;
+    return cnt;
 }
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
     size_t cnt = 0;
     long var = 0;
-    unsigned char character;
-    int char_pos = 0;
 
     while (cnt < size * nmemb) {
-        character = *(unsigned char *)(ptr[cnt + char_pos]);
+        unsigned char character = *(unsigned char*)(ptr + cnt);
         var = so_fputc(character, stream);
 
-        char_pos++;
-
-        if (char_pos == size)
-            break;
-
         if (var == SO_EOF) {
-		    printf("aici sunt\n");
+		    printf("radarada\n");
             break;
 	    }
 
         cnt++;
     }
 
-    return cnt - size;
+    return cnt / size;
 }
 
 int so_fputc(int c, SO_FILE *stream)
