@@ -77,10 +77,8 @@ int so_fclose(SO_FILE *stream)
     r = close(stream->fd);
     free(stream);
 
-    if (r == SO_EOF) {
-        stream->err_ind = SO_EOF;
+    if (r == SO_EOF)
         return SO_EOF;
-    }
 
     return 0;
 }
@@ -202,7 +200,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     while (cnt < size * nmemb) {
         unsigned char character = *(unsigned char *)(ptr + cnt);
 
-        int r = so_fputc(character, stream);
+       int  r = so_fputc(character, stream);
 
         cnt++;
     }
