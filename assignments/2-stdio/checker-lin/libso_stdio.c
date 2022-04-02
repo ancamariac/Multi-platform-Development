@@ -173,18 +173,19 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
     size_t cnt = 0;
     int var = 0;
+    int n = 0;
 
     while (cnt < size * nmemb) {
         var = so_fgetc(stream);
 
         if (var == SO_EOF) {
             lseek(stream->fd, cnt, SEEK_SET);
-            int n = read(stream->fd, stream->buffer, BUFFER_SIZE);
+            n = read(stream->fd, stream->buffer, BUFFER_SIZE);
             if (n == 0) {
                 stream->err_ind = SO_EOF;
                 return cnt / size;
             } else
-		break;
+		        break;
         } else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
 
@@ -203,9 +204,8 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
         int r = so_fputc(character, stream);
 
-        if (r == SO_EOF) {
+        if (r == SO_EOF)
             stream->err_ind = SO_EOF;
-        }
 
         cnt++;
     }
