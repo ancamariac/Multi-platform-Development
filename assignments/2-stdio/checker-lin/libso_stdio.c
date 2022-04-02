@@ -72,11 +72,9 @@ int so_fclose(SO_FILE *stream)
 
     if (stream->last_op == 'w')
 	    so_fflush(stream);
-
     /* close the file and free the stream */
     r = close(stream->fd);
     free(stream);
-
     if (r == SO_EOF)
         return SO_EOF;
 
