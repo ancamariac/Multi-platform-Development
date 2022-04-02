@@ -204,9 +204,6 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
         int r = so_fputc(character, stream);
 
-        if (r == SO_EOF)
-            stream->err_ind = SO_EOF;
-
         cnt++;
     }
 
