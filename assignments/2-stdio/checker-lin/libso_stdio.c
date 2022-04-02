@@ -112,15 +112,12 @@ int so_fgetc(SO_FILE *stream)
         so_fflush(stream);
 
     if (stream->cursor == stream->size) {
-	    //printf("cursor : %ld\n", stream->cursor);
 	    stream->err_ind = SO_EOF;
-	    printf("abcd\n");
         return SO_EOF;
     }
 
     /* check if that's the chunk for reading */
     if (!(chunk == stream->chunk_number)) {
-	    //printf("cursor : %ld\n", stream->cursor);
         /* place the cursor at the character to be read */
         stream->chunk_number = chunk;
         lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
@@ -130,7 +127,6 @@ int so_fgetc(SO_FILE *stream)
         stream->buffer_pos = n;
 
         if (n == -1 || n < stream->buffer_pos) {
-	    printf("efghi\n");
             stream->err_ind = SO_EOF;
             return SO_EOF;
         }
@@ -203,7 +199,12 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     while (cnt < size * nmemb) {
         unsigned char character = *(unsigned char *)(ptr + cnt);
 
-        so_fputc(character, stream);
+        int r = so_fputc(character, stream);
+
+        if (r == SO_EOF) {
+            stream->err_ind = SO_EOF;
+            return 0;
+        }
 
         cnt++;
     }
