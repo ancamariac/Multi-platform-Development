@@ -91,8 +91,10 @@ int so_fflush(SO_FILE *stream)
     if (stream->buffer_pos)
         n = write(stream->fd, stream->buffer, stream->buffer_pos);
 
-    if (n == -1)
+    if (n == -1) {
+        stream->err_ind = SO_EOF;
         return SO_EOF;
+    }
 
     stream->buffer_pos = 0;
     stream->last_op = 'r';
