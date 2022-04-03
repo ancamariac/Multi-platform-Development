@@ -200,7 +200,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     while (cnt < size * nmemb) {
         unsigned char character = *(unsigned char *)(ptr + cnt);
 
-       int  r = so_fputc(character, stream);
+        so_fputc(character, stream);
 
         cnt++;
     }
