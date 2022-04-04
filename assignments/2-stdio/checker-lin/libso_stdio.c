@@ -190,7 +190,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         cnt++;
     }
 
-    return cnt;
+    return cnt / size;
 }
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
