@@ -4,9 +4,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#include <sys/wait.h>
-
-#define BUFFER_SIZE 4096
 
 struct _so_file {
 int fd;
@@ -16,6 +13,7 @@ int buffer_pos;
 long size;
 int err_ind;
 int chunk_number;
+char mode[3];
 char last_op;
 };
 
@@ -53,6 +51,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->buffer_pos = 0;
     file->err_ind = 0;
     file->chunk_number = -1;
+    strcpy(file->mode, mode);
     file->last_op = 'r';
 
     fstat(file->fd, &st);
@@ -69,29 +68,22 @@ int so_fileno(SO_FILE *stream)
 
 int so_fclose(SO_FILE *stream)
 {
-    int rc = 0;
-    int ret = 0;
+    int r = 0;
 
     if (stream->last_op == 'w')
-	    rc = so_fflush(stream);
-
-    if (rc < 0)
-        ret = rc;
+	    so_fflush(stream);
     /* close the file and free the stream */
-    rc = close(stream->fd);
-    if (rc < 0)
-        ret = rc;
-
+    r = close(stream->fd);
     free(stream);
-    
+    if (r == SO_EOF)
+        return SO_EOF;
 
-    return ret;
+    return 0;
 }
 
 int so_fflush(SO_FILE *stream)
 {
     int n = 0;
-    int n2 = 0;
 
     /* empty the buffer and write to file */
     if (stream->buffer_pos)
@@ -102,15 +94,6 @@ int so_fflush(SO_FILE *stream)
         return SO_EOF;
     }
 
-    while (n < stream->buffer_pos) {
-        n2 = write(stream->fd, stream->buffer + n, stream->buffer_pos - n);
-        if (n2 == -1) {
-            stream->err_ind = SO_EOF;
-            return SO_EOF;
-        }
-        n += n2;
-    }
-    
     stream->buffer_pos = 0;
     stream->last_op = 'r';
 
@@ -119,42 +102,34 @@ int so_fflush(SO_FILE *stream)
 
 int so_fgetc(SO_FILE *stream)
 {
-    int n = 0;
-    int rc = 0;
+    ssize_t n = 0;
     int chunk = (int)(stream->cursor / BUFFER_SIZE);
     int pos = (int)(stream->cursor % BUFFER_SIZE);
 
     /* read a character from the stream and returns it */
 
-    if (stream->last_op == 'w') {
-        rc = so_fflush(stream);
-        if (rc < 0) 
-            return rc;
-    }
+    if (stream->last_op == 'w')
+        so_fflush(stream);
 
-    if (stream->cursor >= stream->size) {
-        stream->cursor += 1;
+    if (stream->cursor == stream->size) {
 	    stream->err_ind = SO_EOF;
         return SO_EOF;
     }
-    
+
     /* check if that's the chunk for reading */
     if (!(chunk == stream->chunk_number)) {
         /* place the cursor at the character to be read */
         stream->chunk_number = chunk;
         lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
         /* place in the buffer a chunk of BUFFER_SIZE characters */
-        n = read(stream->fd, stream->buffer, BUFFER_SIZE*sizeof(unsigned char));
+        n = read(stream->fd, stream->buffer, BUFFER_SIZE);
 
         stream->buffer_pos = n;
-        if (n == -1) {
+
+        if (n == -1 || n < stream->buffer_pos) {
             stream->err_ind = SO_EOF;
             return SO_EOF;
         }
-    }
-    if (pos >= stream->buffer_pos) {
-        stream->err_ind = SO_EOF;
-        return -2;
     }
 
     stream->last_op = 'r';
@@ -165,14 +140,8 @@ int so_fgetc(SO_FILE *stream)
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-    int rc = 0;
     if (stream->last_op == 'w')
-        rc = so_fflush(stream);
-
-    if (rc < 0) {
-        stream->err_ind = rc;
-        return rc;
-    }
+        so_fflush(stream);
 
     /* sets the file cursor */
     if (whence == SEEK_SET)
@@ -203,45 +172,22 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     size_t cnt = 0;
     int var = 0;
     int n = 0;
-    int i = 0;
 
     while (cnt < size * nmemb) {
         var = so_fgetc(stream);
 
         if (var == SO_EOF) {
             lseek(stream->fd, cnt, SEEK_SET);
-            n = read(stream->fd, stream->buffer,
-                BUFFER_SIZE);
-            if (n <= 0) {
+            n = read(stream->fd, stream->buffer, BUFFER_SIZE);
+            if (n == 0) {
                 stream->err_ind = SO_EOF;
                 return cnt / size;
-            } else {
-                break;
-            }
-        } else if (var == -2) {
-            lseek(stream->fd, cnt, SEEK_SET);
-            n = read(stream->fd, stream->buffer,
-                BUFFER_SIZE);
-            if (n <= 0) {
-                stream->err_ind = SO_EOF;
-                return cnt / size;
-            } else {
-                if (n > size*nmemb - cnt - 1)
-                    n = size*nmemb - cnt - 1;
-                for (i = 0; i < n; i++) {
-                    *(unsigned char *)(ptr + cnt + i) = stream->buffer[i];
-                }
-                cnt += n;
-                stream->cursor += n;
-                stream->buffer_pos = 0;
-                stream->chunk_number = -1;
-            }
-        } else {
+            } else
+		        break;
+        } else
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
-            cnt++;
-        }
 
-        
+        cnt++;
     }
 
     return cnt / size;
@@ -253,6 +199,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
     while (cnt < size * nmemb) {
         unsigned char character = *(unsigned char *)(ptr + cnt);
+
         so_fputc(character, stream);
 
         cnt++;
@@ -264,19 +211,13 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 int so_fputc(int c, SO_FILE *stream)
 {
     /* put a character into the stream->buffer */
-    int rc = 0;
     unsigned char converted_c = (unsigned char)c;
 
     if (stream->last_op == 'r')
 	stream->buffer_pos = 0;
 
-    if (stream->buffer_pos == BUFFER_SIZE - 1) {
-        rc = so_fflush(stream);
-        if (rc < 0) {
-            stream->err_ind = rc;
-            return rc;
-        }
-    }
+    if (stream->buffer_pos == BUFFER_SIZE - 1)
+        so_fflush(stream);
 
     stream->buffer[stream->buffer_pos] = converted_c;
 
@@ -290,7 +231,7 @@ int so_fputc(int c, SO_FILE *stream)
 
 int so_feof(SO_FILE *stream)
 {
-    if (stream->cursor == stream->size + 1)
+    if (stream->cursor == stream->size)
         return 1;
 
     return 0;
@@ -308,5 +249,5 @@ SO_FILE *so_popen(const char *command, const char *type)
 
 int so_pclose(SO_FILE *stream)
 {
-	return 0;
+    return 0;
 }
