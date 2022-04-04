@@ -8,7 +8,7 @@
 struct _so_file {
 int fd;
 long cursor;
-char buffer[BUFFER_SIZE];
+unsigned char buffer[BUFFER_SIZE];
 int buffer_pos;
 long size;
 int err_ind;
