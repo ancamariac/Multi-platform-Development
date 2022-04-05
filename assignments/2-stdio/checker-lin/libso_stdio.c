@@ -305,7 +305,8 @@ SO_FILE *so_popen(const char *command, const char *type)
 {
     int fd[2];
     pid_t pid;
-
+    struct stat st;
+    
     /* redirect stdin/stdout to the new process */
     int r = pipe(fd);
 
@@ -314,9 +315,9 @@ SO_FILE *so_popen(const char *command, const char *type)
 
     const char *argv[] = {command, NULL};
 
-    SO_FILE *so_file = malloc(sizeof(SO_FILE));
+    SO_FILE *file = malloc(sizeof(SO_FILE));
 
-    if (so_file == NULL)
+    if (file == NULL)
         return NULL;
 
     pid = fork();
@@ -324,7 +325,7 @@ SO_FILE *so_popen(const char *command, const char *type)
     if (pid == -1)
         return NULL;
 
-    switch (pid):
+    switch (pid) {
     case -1:
         /* error on fork */
         close(fd[0]);
@@ -352,10 +353,10 @@ SO_FILE *so_popen(const char *command, const char *type)
         /* parent process */
         if (strcmp(type, "r") == 0) {
 			close(fd[1]);
-			so_file->fd = fd[0];
+			file->fd = fd[0];
 		} else if (strcmp(type, "w") == 0) {
 			close(fd[0]);
-			so_file->fd = fd[1];
+			file->fd = fd[1];
 		}
 
         file->cursor = 0;
@@ -367,7 +368,8 @@ SO_FILE *so_popen(const char *command, const char *type)
         fstat(file->fd, &st);
 
         file->size = st.st_size;
-   
+    }
+
     return so_file;
 }
 
