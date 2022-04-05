@@ -17,7 +17,7 @@ long size;
 int err_ind;
 int chunk_number;
 char last_op;
-int child_pid
+int child_pid;
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
