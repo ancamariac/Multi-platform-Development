@@ -306,7 +306,7 @@ SO_FILE *so_popen(const char *command, const char *type)
     int fd[2];
     pid_t pid;
     struct stat st;
-    
+
     /* redirect stdin/stdout to the new process */
     int r = pipe(fd);
 
@@ -330,7 +330,7 @@ SO_FILE *so_popen(const char *command, const char *type)
         /* error on fork */
         close(fd[0]);
 		close(fd[1]);
-        free(so_file);
+        free(file);
         return NULL;
     case 0:
         /* child process */
