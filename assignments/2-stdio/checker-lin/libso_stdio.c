@@ -3,7 +3,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <stdio.h>
 #include <sys/wait.h>
 
 #define BUFFER_SIZE 4096
