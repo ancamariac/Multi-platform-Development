@@ -17,6 +17,7 @@ long size;
 int err_ind;
 int chunk_number;
 char last_op;
+int child_pid
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
@@ -54,6 +55,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->err_ind = 0;
     file->chunk_number = -1;
     file->last_op = 'r';
+    file->child_pid = 0;
 
     fstat(file->fd, &st);
 
@@ -239,9 +241,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         } else {
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
             cnt++;
-        }
-
-        
+        }       
     }
 
     return cnt / size;
@@ -303,10 +303,84 @@ int so_ferror(SO_FILE *stream)
 
 SO_FILE *so_popen(const char *command, const char *type)
 {
-    return NULL;
+    int fd[2];
+    pid_t pid;
+
+    /* redirect stdin/stdout to the new process */
+    int r = pipe(fd);
+
+    if (r == -1)
+        return NULL;
+
+    const char *argv[] = {command, NULL};
+
+    SO_FILE *so_file = malloc(sizeof(SO_FILE));
+
+    if (so_file == NULL)
+        return NULL;
+
+    pid = fork();
+
+    if (pid == -1)
+        return NULL;
+
+    switch (pid):
+    case -1:
+        /* error on fork */
+        close(fd[0]);
+		close(fd[1]);
+        free(so_file);
+        return NULL;
+    case 0:
+        /* child process */
+        if (strcmp(type, "r") == 0) {
+            /* close fd STDIN for reading */
+            close(fd[0]);
+            /* redirect STDOUT */
+            dup2(fd[1], STDOUT_FILENO);
+        } else if (strcmp(type, "w") == 0) {
+            /* close fd STDOUT for writing */
+            close(fd[1]);
+            /* redirect fd STDIN*/
+            dup2(fd[0], STDIN_FILENO);
+        }
+
+        execvp(command, (char *const *) argv);
+        exit(EXIT_FAILURE);
+
+    default:
+        /* parent process */
+        if (strcmp(type, "r") == 0) {
+			close(fd[1]);
+			so_file->fd = fd[0];
+		} else if (strcmp(type, "w") == 0) {
+			close(fd[0]);
+			so_file->fd = fd[1];
+		}
+
+        file->cursor = 0;
+        file->buffer_pos = 0;
+        file->err_ind = 0;
+        file->chunk_number = -1;
+        file->last_op = 'r';
+
+        fstat(file->fd, &st);
+
+        file->size = st.st_size;
+   
+    return so_file;
 }
 
 int so_pclose(SO_FILE *stream)
 {
+    int r = 0;
+    int w = 0;
+    
+    r = so_fclose(stream);
+
+	if (r < 0)
+		return SO_EOF;
+
+    wait(NULL);
 	return 0;
 }
