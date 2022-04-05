@@ -359,7 +359,7 @@ int so_pclose(SO_FILE *stream)
     }
     close(stream->fd);
 	/* wait for child to finish */
-    if (waitpid(stream->child_pid, &status, WUNTRACED | WCONTINUED) == -1) {
+    if (waitpid(stream->child_pid, &status, 0) == -1) {
         rc = -1;
     }
 	free(stream);
