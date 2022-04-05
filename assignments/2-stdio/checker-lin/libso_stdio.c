@@ -370,7 +370,7 @@ SO_FILE *so_popen(const char *command, const char *type)
         file->size = st.st_size;
     }
 
-    return so_file;
+    return file;
 }
 
 int so_pclose(SO_FILE *stream)
