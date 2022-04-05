@@ -14,10 +14,11 @@ long cursor;
 unsigned char buffer[BUFFER_SIZE];
 int buffer_pos;
 long size;
+int eof;
 int err_ind;
 int chunk_number;
-char last_op;
 int child_pid;
+char last_op;
 };
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
@@ -55,7 +56,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
     file->err_ind = 0;
     file->chunk_number = -1;
     file->last_op = 'r';
-    file->child_pid = 0;
+    file->eof = 0;
 
     fstat(file->fd, &st);
 
@@ -133,13 +134,7 @@ int so_fgetc(SO_FILE *stream)
         if (rc < 0) 
             return rc;
     }
-
-    if (stream->cursor >= stream->size) {
-        stream->cursor += 1;
-	    stream->err_ind = SO_EOF;
-        return SO_EOF;
-    }
-    
+       
     /* check if that's the chunk for reading */
     if (!(chunk == stream->chunk_number)) {
         /* place the cursor at the character to be read */
@@ -150,13 +145,18 @@ int so_fgetc(SO_FILE *stream)
 
         stream->buffer_pos = n;
         if (n == -1) {
-            stream->err_ind = SO_EOF;
+            stream->err_ind = -2;
+            return SO_EOF;
+        }
+        if (n == 0) {
+            stream->eof = 1;
             return SO_EOF;
         }
     }
     if (pos >= stream->buffer_pos) {
+        stream->eof = 1;
         stream->err_ind = SO_EOF;
-        return -2;
+        return SO_EOF;
     }
 
     stream->last_op = 'r';
@@ -211,23 +211,20 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         var = so_fgetc(stream);
 
         if (var == SO_EOF) {
-            lseek(stream->fd, cnt, SEEK_SET);
-            n = read(stream->fd, stream->buffer,
-                BUFFER_SIZE);
-            if (n <= 0) {
-                stream->err_ind = SO_EOF;
-                return cnt / size;
-            } else {
-                break;
+            if (stream->err_ind == -2) {
+                return 0;
             }
-        } else if (var == -2) {
             lseek(stream->fd, cnt, SEEK_SET);
             n = read(stream->fd, stream->buffer,
                 BUFFER_SIZE);
-            if (n <= 0) {
+            if (n < 0) {
                 stream->err_ind = SO_EOF;
+                return 0;
+            } else if (n == 0) {
+                stream->eof = 1;
                 return cnt / size;
             } else {
+                stream->eof = 0;
                 if (n > size*nmemb - cnt - 1)
                     n = size*nmemb - cnt - 1;
                 for (i = 0; i < n; i++) {
@@ -241,9 +238,8 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         } else {
             *(unsigned char *)(ptr + cnt) = (unsigned char)var;
             cnt++;
-        }       
+        } 
     }
-
     return cnt / size;
 }
 
@@ -290,10 +286,7 @@ int so_fputc(int c, SO_FILE *stream)
 
 int so_feof(SO_FILE *stream)
 {
-    if (stream->cursor == stream->size + 1)
-        return 1;
-
-    return 0;
+    return stream->eof;
 }
 
 int so_ferror(SO_FILE *stream)
@@ -303,86 +296,73 @@ int so_ferror(SO_FILE *stream)
 
 SO_FILE *so_popen(const char *command, const char *type)
 {
-    int fd[2];
     pid_t pid;
-    struct stat st;
+	int rc;
+	int fds[2];
+    SO_FILE *file;
 
-    /* redirect stdin/stdout to the new process */
-    int r = pipe(fd);
+	rc = pipe(fds);
+	if (rc)
+		return NULL;
 
-    if (r == -1)
-        return NULL;
+	pid = fork();
 
-    const char *argv[] = {command, NULL};
-
-    SO_FILE *file = malloc(sizeof(SO_FILE));
-
-    if (file == NULL)
-        return NULL;
-
-    pid = fork();
-
-    if (pid == -1)
-        return NULL;
-
-    switch (pid) {
-    case -1:
-        /* error on fork */
-        close(fd[0]);
-		close(fd[1]);
-        free(file);
-        return NULL;
-    case 0:
-        /* child process */
-        if (strcmp(type, "r") == 0) {
-            /* close fd STDIN for reading */
-            close(fd[0]);
-            /* redirect STDOUT */
-            dup2(fd[1], STDOUT_FILENO);
-        } else if (strcmp(type, "w") == 0) {
-            /* close fd STDOUT for writing */
-            close(fd[1]);
-            /* redirect fd STDIN*/
-            dup2(fd[0], STDIN_FILENO);
-        }
-
-        execvp(command, (char *const *) argv);
-        exit(EXIT_FAILURE);
-
-    default:
-        /* parent process */
-        if (strcmp(type, "r") == 0) {
-			close(fd[1]);
-			file->fd = fd[0];
-		} else if (strcmp(type, "w") == 0) {
-			close(fd[0]);
-			file->fd = fd[1];
+	switch (pid) {
+	case -1:
+	    /* Fork failed */
+		close(fds[0]);
+		close(fds[1]);
+		return NULL;
+	case 0:
+		/* Child process */
+		if (strcmp(type, "r") == 0) {
+			close(fds[0]);
+			dup2(fds[1], STDOUT_FILENO);
+		} else {
+			close(fds[1]);
+			dup2(fds[0], STDIN_FILENO);
 		}
 
+		execl("/bin/sh", "sh", "-c", command, NULL);
+		return NULL;
+	default:
+		/* Parent process */
+        file = malloc(sizeof(SO_FILE));
+        if (file == NULL)
+		    return NULL;
+
+		if (strcmp(type, "r") == 0) {
+			file->fd = fds[0];
+			close(fds[1]);
+		} else {
+			file->fd = fds[1];
+            close(fds[0]);
+		}
+
+        file->child_pid = pid;
         file->cursor = 0;
         file->buffer_pos = 0;
         file->err_ind = 0;
         file->chunk_number = -1;
         file->last_op = 'r';
-
-        fstat(file->fd, &st);
-
-        file->size = st.st_size;
-    }
-
-    return file;
+        file->eof = 0;
+        file->size = 0;
+        return file;
+	}
 }
 
 int so_pclose(SO_FILE *stream)
 {
-    int r = 0;
-    int w = 0;
-    
-    r = so_fclose(stream);
-
-	if (r < 0)
-		return SO_EOF;
-
-    wait(NULL);
-	return 0;
+    int status;
+    int rc = 0;
+    if (stream->last_op == 'w') {
+        rc = so_fflush(stream);
+    }
+    close(stream->fd);
+	/* wait for child to finish */
+    if (waitpid(stream->child_pid, &status, WUNTRACED | WCONTINUED) == -1) {
+        rc = -1;
+    }
+	free(stream);
+	return rc;
 }
