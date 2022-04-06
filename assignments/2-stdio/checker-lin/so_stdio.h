@@ -37,18 +37,7 @@
 
 #define BUFFER_SIZE 4096
 
-struct _so_file {
-int fd;
-long cursor;
-unsigned char buffer[BUFFER_SIZE];
-int buffer_pos;
-long size;
-int eof;
-int err_ind;
-int chunk_number;
-int child_pid;
-char last_op;
-};
+struct _so_file;
 
 typedef struct _so_file SO_FILE;
 
