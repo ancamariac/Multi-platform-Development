@@ -22,89 +22,89 @@ char last_op;
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
-    long cursor = 0;
-    struct stat st;
-    int fd = -1;
+	long cursor = 0;
+	struct stat st;
+	int fd = -1;
 
-    if (strcmp(mode, "r") == 0)
+	if (strcmp(mode, "r") == 0)
         fd = open(pathname, O_RDONLY, 0666);
-    else if (strcmp(mode, "r+") == 0)
-        fd = open(pathname, O_RDWR, 0666);
-    else if (strcmp(mode, "w") == 0)
-        fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    else if (strcmp(mode, "w+") == 0)
-        fd = open(pathname, O_RDWR | O_CREAT | O_TRUNC, 0666);
-    else if (strcmp(mode, "a") == 0)
-        fd = open(pathname, O_WRONLY | O_CREAT | O_APPEND, 0666);
-    else if (strcmp(mode, "a+") == 0)
-        fd = open(pathname, O_RDWR | O_CREAT | O_APPEND, 0666);
-    else
-        return NULL;
+	else if (strcmp(mode, "r+") == 0)
+		fd = open(pathname, O_RDWR, 0666);
+	else if (strcmp(mode, "w") == 0)
+		fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	else if (strcmp(mode, "w+") == 0)
+		fd = open(pathname, O_RDWR | O_CREAT | O_TRUNC, 0666);
+	else if (strcmp(mode, "a") == 0)
+		fd = open(pathname, O_WRONLY | O_CREAT | O_APPEND, 0666);
+	else if (strcmp(mode, "a+") == 0)
+		fd = open(pathname, O_RDWR | O_CREAT | O_APPEND, 0666);
+	else
+		return NULL;
 
-    if (fd == -1)
-        return NULL;
+	if (fd == -1)
+		return NULL;
 
-    SO_FILE *file = malloc(sizeof(SO_FILE));
+	SO_FILE *file = malloc(sizeof(SO_FILE));
 
-    if (!file)
-        exit(12);
+	if (!file)
+		exit(12);
 
-    file->fd = fd;
-    file->cursor = cursor;
-    file->buffer_pos = 0;
-    file->err_ind = 0;
-    file->chunk_number = -1;
-    file->last_op = 'r';
-    file->eof = 0;
+	file->fd = fd;
+	file->cursor = cursor;
+	file->buffer_pos = 0;
+	file->err_ind = 0;
+	file->chunk_number = -1;
+	file->last_op = 'r';
+	file->eof = 0;
 
-    fstat(file->fd, &st);
+	fstat(file->fd, &st);
 
-    file->size = st.st_size;
+	file->size = st.st_size;
 
-    return file;
+	return file;
 }
 
 int so_fileno(SO_FILE *stream)
 {
-    return stream->fd;
+	return stream->fd;
 }
 
 int so_fclose(SO_FILE *stream)
 {
-    int rc = 0;
-    int ret = 0;
+	int rc = 0;
+	int ret = 0;
 
-    if (stream->last_op == 'w')
-	    rc = so_fflush(stream);
-    if (rc < 0)
-        ret = rc;
+	if (stream->last_op == 'w')
+		rc = so_fflush(stream);
+	if (rc < 0)
+	ret = rc;
     /* close the file and free the stream */
-    rc = close(stream->fd);
-    if (rc < 0)
-        ret = rc;
-    free(stream);
+	rc = close(stream->fd);
+	if (rc < 0)
+		ret = rc;
+	free(stream);
 
-    return ret;
+	return ret;
 }
 
 int so_fflush(SO_FILE *stream)
 {
-    int n = 0;
-    int n2 = 0;
+	int n = 0;
+	int n2 = 0;
 
     /* empty the buffer and write to file */
-    if (stream->buffer_pos)
-        n = write(stream->fd, stream->buffer, stream->buffer_pos);
+	if (stream->buffer_pos)
+		n = write(stream->fd, stream->buffer, stream->buffer_pos);
 
-    if (n == -1) {
-        stream->err_ind = SO_EOF;
-        return SO_EOF;
-    }
+	if (n == -1) {
+		stream->err_ind = SO_EOF;
+		return SO_EOF;
+	}
 
-    while (n < stream->buffer_pos) {
-        n2 = write(stream->fd, stream->buffer + n, stream->buffer_pos - n);
-        if (n2 == -1) {
-            stream->err_ind = SO_EOF;
+	while (n < stream->buffer_pos) {
+		n2 = write(stream->fd, stream->buffer + n, stream->buffer_pos - n);
+		if (n2 == -1) {
+        	stream->err_ind = SO_EOF;
             return SO_EOF;
         }
         n += n2;
