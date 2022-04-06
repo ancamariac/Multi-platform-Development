@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 #include "so_stdio.h"
 #include <fcntl.h>
 #include <string.h>
@@ -126,16 +127,15 @@ int so_fgetc(SO_FILE *stream)
 
 	if (stream->last_op == 'w') {
 		rc = so_fflush(stream);
-		if (rc < 0) 
+		if (rc < 0)
 			return rc;
-	}
-       
-    /* check if that's the chunk for reading */
+	}  
+	/* check if that's the chunk for reading */
 	if (!(chunk == stream->chunk_number)) {
-        /* place the cursor at the character to be read */
+		/* place the cursor at the character to be read */
 		stream->chunk_number = chunk;
 		lseek(stream->fd, BUFFER_SIZE * stream->chunk_number, SEEK_SET);
-        /* place in the buffer a chunk of BUFFER_SIZE characters */
+		/* place in the buffer a chunk of BUFFER_SIZE characters */
 		n = read(stream->fd, stream->buffer, BUFFER_SIZE*sizeof(unsigned char));
 
 		stream->buffer_pos = n;
@@ -218,21 +218,21 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 			} else if (n == 0) {
 				stream->eof = 1;
 				return cnt / size;
-			} else {
-				stream->eof = 0;
-				if (n > size * nmemb - cnt - 1)
-					n = size * nmemb - cnt - 1;
-				for (i = 0; i < n; i++)
-					*(unsigned char *)(ptr + cnt + i) = stream->buffer[i];
-				cnt += n;
-				stream->cursor += n;
-				stream->buffer_pos = 0;
-				stream->chunk_number = -1;
-			}
+			} //else {
+			stream->eof = 0;
+			if (n > size * nmemb - cnt - 1)
+				n = size * nmemb - cnt - 1;
+			for (i = 0; i < n; i++)
+				*(unsigned char *)(ptr + cnt + i) = stream->buffer[i];
+			cnt += n;
+			stream->cursor += n;
+			stream->buffer_pos = 0;
+			stream->chunk_number = -1;
+			//}
 		} else {
 			*(unsigned char *)(ptr + cnt) = (unsigned char)var;
 			cnt++;
-		} 
+		}
 	}
 	return cnt / size;
 }
@@ -246,8 +246,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 		so_fputc(character, stream);
 		cnt++;
-    }
-
+	}
 	return cnt / size;
 }
 
@@ -265,7 +264,7 @@ int so_fputc(int c, SO_FILE *stream)
 		if (rc < 0) {
 			stream->err_ind = rc;
 			return rc;
-		}	
+		}
 	}
 
 	stream->buffer[stream->buffer_pos] = converted_c;
@@ -348,14 +347,13 @@ int so_pclose(SO_FILE *stream)
 {
 	int status;
 	int rc = 0;
-	if (stream->last_op == 'w') {
+
+	if (stream->last_op == 'w')
 		rc = so_fflush(stream);
-	}
 	close(stream->fd);
 	/* wait for child to finish */
-	if (waitpid(stream->child_pid, &status, 0) == -1) {
+	if (waitpid(stream->child_pid, &status, 0) == -1)
 		rc = -1;
-	}
 	free(stream);
 	return rc;
 }
