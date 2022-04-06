@@ -22,6 +22,11 @@
 #error "Unknown platform"
 #endif
 
+#include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 #include <stdlib.h>
 
 #define SEEK_SET	0	/* Seek from beginning of file.  */
@@ -31,6 +36,19 @@
 #define SO_EOF (-1)
 
 #define BUFFER_SIZE 4096
+
+struct SO_FILE {
+int fd;
+long cursor;
+unsigned char buffer[BUFFER_SIZE];
+int buffer_pos;
+long size;
+int eof;
+int err_ind;
+int chunk_number;
+int child_pid;
+char last_op;
+};
 
 //typedef struct _so_file SO_FILE;
 

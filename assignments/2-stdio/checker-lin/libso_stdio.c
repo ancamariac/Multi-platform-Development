@@ -1,27 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include "so_stdio.h"
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
 
 #define BUFFER_SIZE 4096
 
-struct _so_file {
-int fd;
-long cursor;
-unsigned char buffer[BUFFER_SIZE];
-int buffer_pos;
-long size;
-int eof;
-int err_ind;
-int chunk_number;
-int child_pid;
-char last_op;
-};
-
-_so_file *so_fopen(const char *pathname, const char *mode)
+SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
 	long cursor = 0;
 	struct stat st;
@@ -45,7 +27,7 @@ _so_file *so_fopen(const char *pathname, const char *mode)
 	if (fd == -1)
 		return NULL;
 
-	_so_file *file = malloc(sizeof(_so_file));
+	SO_FILE *file = malloc(sizeof(SO_FILE));
 
 	if (!file)
 		exit(12);
@@ -65,12 +47,12 @@ _so_file *so_fopen(const char *pathname, const char *mode)
 	return file;
 }
 
-int so_fileno(_so_file *stream)
+int so_fileno(SO_FILE *stream)
 {
 	return stream->fd;
 }
 
-int so_fclose(_so_file *stream)
+int so_fclose(SO_FILE *stream)
 {
 	int rc = 0;
 	int ret = 0;
@@ -88,7 +70,7 @@ int so_fclose(_so_file *stream)
 	return ret;
 }
 
-int so_fflush(_so_file *stream)
+int so_fflush(SO_FILE *stream)
 {
 	int n = 0;
 	int n2 = 0;
@@ -116,7 +98,7 @@ int so_fflush(_so_file *stream)
 	return 0;
 }
 
-int so_fgetc(_so_file *stream)
+int so_fgetc(SO_FILE *stream)
 {
 	int n = 0;
 	int rc = 0;
@@ -160,7 +142,7 @@ int so_fgetc(_so_file *stream)
 	return (int)(stream->buffer[pos]);
 }
 
-int so_fseek(_so_file *stream, long offset, int whence)
+int so_fseek(SO_FILE *stream, long offset, int whence)
 {
 	int rc = 0;
 
@@ -191,12 +173,12 @@ int so_fseek(_so_file *stream, long offset, int whence)
 	return 0;
 }
 
-long so_ftell(_so_file *stream)
+long so_ftell(SO_FILE *stream)
 {
 	return stream->cursor;
 }
 
-size_t so_fread(void *ptr, size_t size, size_t nmemb, _so_file *stream)
+size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
 	size_t cnt = 0;
 	int var = 0;
@@ -236,7 +218,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, _so_file *stream)
 	return cnt / size;
 }
 
-size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, _so_file *stream)
+size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
 	size_t cnt = 0;
 
@@ -249,7 +231,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, _so_file *stream)
 	return cnt / size;
 }
 
-int so_fputc(int c, _so_file *stream)
+int so_fputc(int c, SO_FILE *stream)
 {
     /* put a character into the stream->buffer */
 	int rc = 0;
@@ -275,22 +257,22 @@ int so_fputc(int c, _so_file *stream)
 	return c;
 }
 
-int so_feof(_so_file *stream)
+int so_feof(SO_FILE *stream)
 {
 	return stream->eof;
 }
 
-int so_ferror(_so_file *stream)
+int so_ferror(SO_FILE *stream)
 {
 	return stream->err_ind;
 }
 
-_so_file *so_popen(const char *command, const char *type)
+SO_FILE *so_popen(const char *command, const char *type)
 {
 	pid_t pid;
 	int rc;
 	int fds[2];
-	_so_file *file;
+	SO_FILE *file;
 
 	rc = pipe(fds);
 	if (rc)
@@ -318,7 +300,7 @@ _so_file *so_popen(const char *command, const char *type)
 		return NULL;
 	default:
 		/* Parent process */
-		file = malloc(sizeof(_so_file));
+		file = malloc(sizeof(SO_FILE));
 
 		if (file == NULL)
 			return NULL;
@@ -342,7 +324,7 @@ _so_file *so_popen(const char *command, const char *type)
 	}
 }
 
-int so_pclose(_so_file *stream)
+int so_pclose(SO_FILE *stream)
 {
 	int status;
 	int rc = 0;
