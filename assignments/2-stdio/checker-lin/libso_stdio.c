@@ -14,7 +14,7 @@ int err_ind;
 int chunk_number;
 int child_pid;
 char last_op;
-} SO_FILE;
+};
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
