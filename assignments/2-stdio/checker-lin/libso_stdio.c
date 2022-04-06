@@ -22,9 +22,9 @@ char last_op;
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
-    int fd = -1;
     long cursor = 0;
     struct stat st;
+    int fd = -1;
 
     if (strcmp(mode, "r") == 0)
         fd = open(pathname, O_RDONLY, 0666);
@@ -76,16 +76,13 @@ int so_fclose(SO_FILE *stream)
 
     if (stream->last_op == 'w')
 	    rc = so_fflush(stream);
-
     if (rc < 0)
         ret = rc;
     /* close the file and free the stream */
     rc = close(stream->fd);
     if (rc < 0)
         ret = rc;
-
     free(stream);
-    
 
     return ret;
 }
@@ -167,6 +164,7 @@ int so_fgetc(SO_FILE *stream)
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
     int rc = 0;
+
     if (stream->last_op == 'w')
         rc = so_fflush(stream);
 
@@ -210,9 +208,8 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         var = so_fgetc(stream);
 
         if (var == SO_EOF) {
-            if (stream->err_ind == -2) {
+            if (stream->err_ind == -2)
                 return 0;
-            }
             lseek(stream->fd, cnt, SEEK_SET);
             n = read(stream->fd, stream->buffer,
                 BUFFER_SIZE);
@@ -224,8 +221,8 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
                 return cnt / size;
             } else {
                 stream->eof = 0;
-                if (n > size*nmemb - cnt - 1)
-                    n = size*nmemb - cnt - 1;
+                if (n > size * nmemb - cnt - 1)
+                    n = size * nmemb - cnt - 1;
                 for (i = 0; i < n; i++) {
                     *(unsigned char *)(ptr + cnt + i) = stream->buffer[i];
                 }
@@ -327,9 +324,9 @@ SO_FILE *so_popen(const char *command, const char *type)
 	default:
 		/* Parent process */
         file = malloc(sizeof(SO_FILE));
-        if (file == NULL)
-		    return NULL;
 
+        if (file == NULL)
+            return NULL;
 		if (strcmp(type, "r") == 0) {
 			file->fd = fds[0];
 			close(fds[1]);
