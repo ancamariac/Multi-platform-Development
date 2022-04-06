@@ -109,10 +109,8 @@ int so_fflush(SO_FILE *stream)
         }
         n += n2;
     }
-    
     stream->buffer_pos = 0;
     stream->last_op = 'r';
-
     return 0;
 }
 
@@ -223,9 +221,8 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
                 stream->eof = 0;
                 if (n > size * nmemb - cnt - 1)
                     n = size * nmemb - cnt - 1;
-                for (i = 0; i < n; i++) {
+                for (i = 0; i < n; i++)
                     *(unsigned char *)(ptr + cnt + i) = stream->buffer[i];
-                }
                 cnt += n;
                 stream->cursor += n;
                 stream->buffer_pos = 0;
@@ -245,8 +242,8 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
     while (cnt < size * nmemb) {
         unsigned char character = *(unsigned char *)(ptr + cnt);
-        so_fputc(character, stream);
 
+        so_fputc(character, stream);
         cnt++;
     }
 
