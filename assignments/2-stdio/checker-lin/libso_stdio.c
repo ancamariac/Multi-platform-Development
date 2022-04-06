@@ -8,8 +8,6 @@
 
 #define BUFFER_SIZE 4096
 
-typedef struct _so_file SO_FILE;
-
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
 	long cursor = 0;
