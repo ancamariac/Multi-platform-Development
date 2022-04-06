@@ -45,7 +45,7 @@ int child_pid;
 char last_op;
 };
 
-typedef struct _so_file SO_FILE;
+//typedef struct _so_file SO_FILE;
 
 FUNC_DECL_PREFIX SO_FILE *so_fopen(const char *pathname, const char *mode);
 FUNC_DECL_PREFIX int so_fclose(SO_FILE *stream);
