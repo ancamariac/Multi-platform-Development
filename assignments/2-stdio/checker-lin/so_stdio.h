@@ -32,7 +32,7 @@
 
 #define BUFFER_SIZE 4096
 
-typedef struct _so_file {
+struct _so_file {
 int fd;
 long cursor;
 unsigned char buffer[BUFFER_SIZE];
@@ -43,7 +43,7 @@ int err_ind;
 int chunk_number;
 int child_pid;
 char last_op;
-} SO_FILE;
+};
 
 FUNC_DECL_PREFIX SO_FILE *so_fopen(const char *pathname, const char *mode);
 FUNC_DECL_PREFIX int so_fclose(SO_FILE *stream);
