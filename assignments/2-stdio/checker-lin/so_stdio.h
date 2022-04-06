@@ -1,9 +1,9 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 /*
-* Operating System Executable Loader header
-*
-* 2019, Operating Systems
-*/
-
+ * Operating System Executable Loader header
+ *
+ * 2019, Operating Systems
+ */
 #ifndef SO_STDIO_H
 #define SO_STDIO_H
 
@@ -31,6 +31,19 @@
 #define SO_EOF (-1)
 
 #define BUFFER_SIZE 4096
+
+struct _so_file {
+int fd;
+long cursor;
+unsigned char buffer[BUFFER_SIZE];
+int buffer_pos;
+long size;
+int eof;
+int err_ind;
+int chunk_number;
+int child_pid;
+char last_op;
+};
 
 typedef struct _so_file SO_FILE;
 
