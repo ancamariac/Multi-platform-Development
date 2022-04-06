@@ -16,8 +16,6 @@ int child_pid;
 char last_op;
 };
 
-typedef struct _so_file SO_FILE;
-
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
 	long cursor = 0;
