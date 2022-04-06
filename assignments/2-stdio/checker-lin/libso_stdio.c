@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+// SPDX-License-Identifier: GPL-2.0-or-later
 #include "so_stdio.h"
 #include <fcntl.h>
 #include <string.h>
@@ -129,7 +129,7 @@ int so_fgetc(SO_FILE *stream)
 		rc = so_fflush(stream);
 		if (rc < 0)
 			return rc;
-	}  
+	}
 	/* check if that's the chunk for reading */
 	if (!(chunk == stream->chunk_number)) {
 		/* place the cursor at the character to be read */
@@ -218,7 +218,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 			} else if (n == 0) {
 				stream->eof = 1;
 				return cnt / size;
-			} //else {
+			}
 			stream->eof = 0;
 			if (n > size * nmemb - cnt - 1)
 				n = size * nmemb - cnt - 1;
@@ -228,7 +228,6 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 			stream->cursor += n;
 			stream->buffer_pos = 0;
 			stream->chunk_number = -1;
-			//}
 		} else {
 			*(unsigned char *)(ptr + cnt) = (unsigned char)var;
 			cnt++;
@@ -257,7 +256,7 @@ int so_fputc(int c, SO_FILE *stream)
 	unsigned char converted_c = (unsigned char)c;
 
 	if (stream->last_op == 'r')
-	stream->buffer_pos = 0;
+		stream->buffer_pos = 0;
 
 	if (stream->buffer_pos == BUFFER_SIZE - 1) {
 		rc = so_fflush(stream);
